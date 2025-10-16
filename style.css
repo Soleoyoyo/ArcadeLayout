@@ -1,0 +1,481 @@
+/* Reset & base */
+body {
+  margin: 0;
+  font-family: 'Press Start 2P', monospace;
+  background: #1a1a1a;
+  color: #fff;
+  overflow: auto;
+}
+
+header {
+  text-align: center;
+  padding: 20px 10px 10px;
+  background: linear-gradient(270deg, #ff00ff, #00ffff, #ffff00, #ff0000);
+  background-size: 800% 800%;
+  animation: rainbow 12s ease infinite;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  text-align: center;
+  color: #fff;
+  -webkit-text-stroke: 1px black;
+  text-shadow: 2px 2px 0 #000,
+               -2px 2px 0 #000,
+                2px -2px 0 #000,
+               -2px -2px 0 #000;
+}
+
+#titleLabel {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  color: #fff;
+  -webkit-text-stroke: 0.5px black;
+  text-shadow: 1px 1px 0 #000,
+               -1px 1px 0 #000,
+                1px -1px 0 #000,
+               -1px -1px 0 #000;
+  margin-top: 5px;
+}
+
+header input {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  width: 280px;
+  text-align: center;
+}
+
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Container: 3-column layout */
+#container {
+  display: flex;
+  height: calc(100vh - 120px);
+  overflow: auto;
+}
+
+/* Left Sidebar (Cabinet Manager) */
+#sidebar-left {
+  width: 300px;
+  background: #111;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 3px solid #ff00ff;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+/* Right Sidebar (Room Manager + Import/Export) */
+#sidebar-right {
+  width: 300px;
+  background: #111;
+  padding: 20px;
+  overflow-y: auto;
+  border-left: 3px solid #ff00ff;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+/* Room container (center) */
+#roomContainer {
+  flex: 1;
+  overflow: auto;
+  padding: 40px; 
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Room itself */
+#room {
+  background: #222;
+  position: relative;
+  box-sizing: content-box;
+  border: 4px solid #00ffff;
+  min-width: max-content;
+  min-height: max-content;
+}
+
+/* Grid lines */
+.grid-line {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+/* Cabinets */
+.cabinet {
+  position: absolute;
+  border: 2px solid #ffcc00;
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  user-select: none;
+  box-sizing: border-box;
+  font-size: 0.8rem;
+  padding: 6px;
+  transition: none; 
+  transform-origin: center center;
+}
+
+.cabinet.selected {
+  outline: 3px solid #ff00ff;
+}
+
+/* Simple Mode */
+body.simple-mode {
+  font-family: Arial, sans-serif;
+  background: #e0e0e0;
+  color: #000;
+}
+
+body.simple-mode header {
+  background: #bbb;
+  animation: none;
+  position: sticky;
+}
+
+body.simple-mode header h1,
+body.simple-mode #titleLabel,
+body.simple-mode label,
+body.simple-mode #sidebar-left h2,
+body.simple-mode #sidebar-right h2 {
+  color: #000; 
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  font-family: Arial, sans-serif;
+}
+
+body.simple-mode input,
+body.simple-mode select,
+body.simple-mode textarea,
+body.simple-mode button {
+  font-family: Arial, sans-serif;
+  color: #000;
+  background: #fff;
+  border: 2px solid #333;
+}
+
+body.simple-mode #sidebar-left,
+body.simple-mode #sidebar-right {
+  background: #ddd;
+  border-color: #333;
+}
+
+body.simple-mode #sidebar-left button,
+body.simple-mode #sidebar-right button,
+body.simple-mode #simpleModeBtn {
+  background: #aaa;
+  color: #000;
+  border: 2px solid #333;
+}
+
+body.simple-mode #room {
+  border: 3px solid #000;
+  background: #fff;
+}
+
+body.simple-mode .grid-line {
+  background: #444;
+}
+
+body.simple-mode .cabinet {
+  border: 2px solid #000;
+  font-family: Arial, sans-serif;
+  font-size: 0.8rem;
+  color: #000;
+}
+
+/* Simple Mode Button */
+#simpleModeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: #ff00ff;
+  color: #fff;
+  z-index: 20;
+  transition: 0.2s all;
+}
+
+#simpleModeBtn:hover {
+  background: #ff66ff;
+}
+
+/* Scrollbars */
+#container::-webkit-scrollbar,
+#roomContainer::-webkit-scrollbar,
+#sidebar-left::-webkit-scrollbar,
+#sidebar-right::-webkit-scrollbar {
+  width: 20px;
+  height: 20px;
+}
+
+#container::-webkit-scrollbar-track,
+#roomContainer::-webkit-scrollbar-track,
+#sidebar-left::-webkit-scrollbar-track,
+#sidebar-right::-webkit-scrollbar-track {
+  background: #222;
+  border-radius: 10px;
+  margin: 4px;
+}
+
+#container::-webkit-scrollbar-thumb,
+#roomContainer::-webkit-scrollbar-thumb,
+#sidebar-left::-webkit-scrollbar-thumb,
+#sidebar-right::-webkit-scrollbar-thumb {
+  background-color: #ff00ff;
+  border-radius: 10px;
+  border: 4px solid #222;
+}
+
+#container::-webkit-scrollbar-thumb:hover,
+#roomContainer::-webkit-scrollbar-thumb:hover,
+#sidebar-left::-webkit-scrollbar-thumb:hover,
+#sidebar-right::-webkit-scrollbar-thumb:hover {
+  background-color: #ff66ff;
+}
+
+/* Firefox scrollbar */
+#container,
+#roomContainer,
+#sidebar-left,
+#sidebar-right {
+  scrollbar-width: thin;
+  scrollbar-color: #ff00ff #222;
+}
+
+/* Smooth transition for all elements except cabinets */
+body, header, #sidebar-left, #sidebar-right, #room, #sidebar-left button, #sidebar-right button, #simpleModeBtn,
+input, select, textarea {
+  transition: all 0.5s ease;
+}
+
+/* Sidebar headings */
+#sidebar-left h2, #sidebar-right h2 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #ffcc00;
+  border-bottom: 1px solid #444;
+  padding-bottom: 5px;
+}
+
+/* Sidebar labels and inputs */
+#sidebar-left label, #sidebar-right label,
+#selectedCabinetUI label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+}
+
+#sidebar-left input[type="number"],
+#sidebar-left input[type="text"],
+#sidebar-left input[type="color"],
+#sidebar-right input[type="number"],
+#sidebar-right input[type="text"],
+#sidebar-right input[type="color"],
+#selectedCabinetUI input[type="number"],
+#selectedCabinetUI input[type="text"],
+#selectedCabinetUI input[type="color"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 4px;
+  border: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+#sidebar-left input[type="color"],
+#sidebar-right input[type="color"],
+#selectedCabinetUI input[type="color"] {
+  height: 40px;
+  padding: 0;
+}
+
+/* Buttons (all sidebars + selected cabinet) */
+#sidebar-left button,
+#sidebar-right button,
+#selectedCabinetUI button,
+#exportLayout,
+#importLayout {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: none;
+  background: #ff00ff;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s all;
+  margin-top: 5px;
+}
+
+#sidebar-left button:hover,
+#sidebar-right button:hover,
+#selectedCabinetUI button:hover,
+#exportLayout:hover,
+#importLayout:hover {
+  background: #ff66ff;
+}
+
+/* Selected Cabinet: match Cabinet Creator (no card/border) */
+#selectedCabinetUI {
+  margin-top: 15px;
+  padding: 0;            /* same as creator (no inner card padding) */
+  border: none;          /* remove the visible border */
+  border-radius: 0;      /* no rounded frame */
+  background: transparent;
+  box-shadow: none;      /* ensure no shadow outline */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Keep the heading style consistent with other section titles */
+#selectedCabinetUI h2 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #ffcc00;
+  border-bottom: 1px solid #444;
+  padding-bottom: 5px;
+}
+
+/* Inputs & buttons keep the same styles as elsewhere */
+#selectedCabinetUI label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+}
+
+#selectedCabinetUI input[type="number"],
+#selectedCabinetUI input[type="text"],
+#selectedCabinetUI input[type="color"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 4px;
+  border: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+#selectedCabinetUI input[type="color"] {
+  height: 40px;
+  padding: 0;
+}
+
+#selectedCabinetUI button {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: none;
+  background: #ff00ff;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s all;
+  margin-top: 5px;
+}
+
+#selectedCabinetUI button:hover {
+  background: #ff66ff;
+}
+
+
+/* HR styling */
+#sidebar-left hr, #sidebar-right hr {
+  border: 1px solid #444;
+  margin: 15px 0;
+}
+
+/* File input for import neatly */
+#sidebar-right input[type="file"] {
+  margin-top: 5px;
+  padding: 6px 0;
+}
+
+/* Import Button styled like Export */
+#importLayoutLabel {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #ff00ff;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+#importLayoutLabel:hover {
+  background: #ff66ff;
+}
+
+/* Hide actual file input */
+#sidebar-right input[type="file"] {
+  display: none;
+}
+
+body.simple-mode * { font-family: Arial, sans-serif !important; }
+
+.cabinet {
+  position: absolute;
+  border: 2px solid #ffcc00;
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  user-select: none;
+  overflow: hidden; /* prevents text spilling out */
+  transform-origin: center center;
+}
+
+/* Cabinet name text */
+.cabinet-name {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  padding: 0.5px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform-origin: center center;
+  pointer-events: none;
+}

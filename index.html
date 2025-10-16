@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arcade Layout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1 id="mainTitle">Arcade Layout</h1>
+    <label for="titleInput" id="titleLabel">Change Title:</label>
+    <input type="text" id="titleInput" value="Arcade Layout">
+    <button id="simpleModeBtn">Simple Mode</button>
+  </header>
+
+  <div id="container">
+    <!-- LEFT SIDEBAR: Cabinet Manager -->
+    <div id="sidebar-left">
+      <h2>Cabinet Creator</h2>
+      <label>Name: <input type="text" id="cabinetName" value="Cabinet"></label>
+      <label>Width (M): <input type="number" id="cabinetWidth" value="1" min="0.5" step="0.1"></label>
+      <label>Length (M): <input type="number" id="cabinetHeight" value="1" min="0.5" step="0.1"></label>
+      <label>Cabinet Colour: <input type="color" id="cabinetColor" value="#ff00ff"></label>
+      <button id="addCabinet">Add Cabinet</button>
+
+      <hr>
+
+      <div id="selectedCabinetUI" style="display: none;">
+        <h2>Selected Cabinet</h2>
+        <label>Name: <input type="text" id="selectedName"></label>
+        <label>Width (M): <input type="number" id="selectedWidth" min="0.5" step="0.1"></label>
+        <label>Length (M): <input type="number" id="selectedHeight" min="0.5" step="0.1"></label>
+        <label>Rotation (°): <input type="number" id="selectedRotation" min="0" max="359" step="1"></label>
+        <label>Colour: <input type="color" id="selectedColor"></label>
+        <label><input type="checkbox" id="snapToggle" checked> Enable snapping</label>
+        <button id="deselectCabinet">Deselect</button>
+        <button id="deleteCabinet">Delete Cabinet</button>
+      </div>
+    </div>
+
+    <!-- CENTER: Room -->
+    <div id="roomContainer">
+      <div id="room"></div>
+    </div>
+
+    <!-- RIGHT SIDEBAR: Room Manager + Import/Export -->
+    <div id="sidebar-right">
+      <h2>Room Dimensions</h2>
+      <label>Width (M): <input type="number" id="roomWidth" value="10" min="1"></label>
+      <label>Length (M): <input type="number" id="roomHeight" value="8" min="1"></label>
+      <label>Grid Size (M): <input type="number" id="gridSize" value="1" min="0.1" step="0.1"></label>
+      <button id="updateRoom">Update Room</button>
+
+      <hr>
+
+      <h2>Import / Export</h2>
+<button id="exportLayout">Export Room</button>
+<button id="importLayoutBtn">Import Room</button>
+<input type="file" id="importFile" accept=".json" style="display: none;">
+
+  <script src="script.js"></script>
+</body>
+</html>
