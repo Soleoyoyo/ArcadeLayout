@@ -139,9 +139,8 @@ header input {
   transform-origin: center center;
 }
 
-.cabinet.selected {
-  outline: 3px solid #ff00ff;
-}
+.cabinet.selected { outline: 3px solid #ff00ff; }
+.cabinet.locked { cursor: not-allowed; opacity: 0.95; }
 
 /* Simple Mode */
 body.simple-mode {
@@ -150,62 +149,28 @@ body.simple-mode {
   color: #000;
 }
 
-body.simple-mode header {
-  background: #bbb;
-  animation: none;
-  position: sticky;
-}
-
+body.simple-mode header { background: #bbb; animation: none; position: sticky; }
 body.simple-mode header h1,
 body.simple-mode #titleLabel,
 body.simple-mode label,
 body.simple-mode #sidebar-left h2,
-body.simple-mode #sidebar-right h2 {
-  color: #000; 
-  -webkit-text-stroke: 0;
-  text-shadow: none;
-  font-family: Arial, sans-serif;
-}
+body.simple-mode #sidebar-right h2 { color: #000; -webkit-text-stroke: 0; text-shadow: none; font-family: Arial, sans-serif; }
 
 body.simple-mode input,
 body.simple-mode select,
 body.simple-mode textarea,
-body.simple-mode button {
-  font-family: Arial, sans-serif;
-  color: #000;
-  background: #fff;
-  border: 2px solid #333;
-}
+body.simple-mode button { font-family: Arial, sans-serif; color: #000; background: #fff; border: 2px solid #333; }
 
 body.simple-mode #sidebar-left,
-body.simple-mode #sidebar-right {
-  background: #ddd;
-  border-color: #333;
-}
+body.simple-mode #sidebar-right { background: #ddd; border-color: #333; }
 
 body.simple-mode #sidebar-left button,
 body.simple-mode #sidebar-right button,
-body.simple-mode #simpleModeBtn {
-  background: #aaa;
-  color: #000;
-  border: 2px solid #333;
-}
+body.simple-mode #simpleModeBtn { background: #aaa; color: #000; border: 2px solid #333; }
 
-body.simple-mode #room {
-  border: 3px solid #000;
-  background: #fff;
-}
-
-body.simple-mode .grid-line {
-  background: #444;
-}
-
-body.simple-mode .cabinet {
-  border: 2px solid #000;
-  font-family: Arial, sans-serif;
-  font-size: 0.8rem;
-  color: #000;
-}
+body.simple-mode #room { border: 3px solid #000; background: #fff; }
+body.simple-mode .grid-line { background: #444; }
+body.simple-mode .cabinet { border: 2px solid #000; font-family: Arial, sans-serif; font-size: 0.8rem; color: #000; }
 
 /* Simple Mode Button */
 #simpleModeBtn {
@@ -223,59 +188,34 @@ body.simple-mode .cabinet {
   z-index: 20;
   transition: 0.2s all;
 }
-
-#simpleModeBtn:hover {
-  background: #ff66ff;
-}
+#simpleModeBtn:hover { background: #ff66ff; }
 
 /* Scrollbars */
 #container::-webkit-scrollbar,
 #roomContainer::-webkit-scrollbar,
 #sidebar-left::-webkit-scrollbar,
-#sidebar-right::-webkit-scrollbar {
-  width: 20px;
-  height: 20px;
-}
+#sidebar-right::-webkit-scrollbar { width: 20px; height: 20px; }
 
 #container::-webkit-scrollbar-track,
 #roomContainer::-webkit-scrollbar-track,
 #sidebar-left::-webkit-scrollbar-track,
-#sidebar-right::-webkit-scrollbar-track {
-  background: #222;
-  border-radius: 10px;
-  margin: 4px;
-}
+#sidebar-right::-webkit-scrollbar-track { background: #222; border-radius: 10px; margin: 4px; }
 
 #container::-webkit-scrollbar-thumb,
 #roomContainer::-webkit-scrollbar-thumb,
 #sidebar-left::-webkit-scrollbar-thumb,
-#sidebar-right::-webkit-scrollbar-thumb {
-  background-color: #ff00ff;
-  border-radius: 10px;
-  border: 4px solid #222;
-}
-
+#sidebar-right::-webkit-scrollbar-thumb { background-color: #ff00ff; border-radius: 10px; border: 4px solid #222; }
 #container::-webkit-scrollbar-thumb:hover,
 #roomContainer::-webkit-scrollbar-thumb:hover,
 #sidebar-left::-webkit-scrollbar-thumb:hover,
-#sidebar-right::-webkit-scrollbar-thumb:hover {
-  background-color: #ff66ff;
-}
+#sidebar-right::-webkit-scrollbar-thumb:hover { background-color: #ff66ff; }
 
 /* Firefox scrollbar */
-#container,
-#roomContainer,
-#sidebar-left,
-#sidebar-right {
-  scrollbar-width: thin;
-  scrollbar-color: #ff00ff #222;
-}
+#container, #roomContainer, #sidebar-left, #sidebar-right { scrollbar-width: thin; scrollbar-color: #ff00ff #222; }
 
-/* Smooth transition for all elements except cabinets */
+/* Smooth transitions */
 body, header, #sidebar-left, #sidebar-right, #room, #sidebar-left button, #sidebar-right button, #simpleModeBtn,
-input, select, textarea {
-  transition: all 0.5s ease;
-}
+input, select, textarea { transition: all 0.5s ease; }
 
 /* Sidebar headings */
 #sidebar-left h2, #sidebar-right h2 {
@@ -286,15 +226,13 @@ input, select, textarea {
   padding-bottom: 5px;
 }
 
-/* Sidebar labels and inputs */
-#sidebar-left label, #sidebar-right label,
-#selectedCabinetUI label {
+/* Sidebar labels/inputs */
+#sidebar-left label, #sidebar-right label, #selectedCabinetUI label {
   display: flex;
   flex-direction: column;
   font-size: 0.8rem;
   margin-bottom: 10px;
 }
-
 #sidebar-left input[type="number"],
 #sidebar-left input[type="text"],
 #sidebar-left input[type="color"],
@@ -304,24 +242,12 @@ input, select, textarea {
 #selectedCabinetUI input[type="number"],
 #selectedCabinetUI input[type="text"],
 #selectedCabinetUI input[type="color"] {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  border-radius: 4px;
-  border: none;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.85rem;
-  box-sizing: border-box;
+  width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: none;
+  font-family: 'Press Start 2P', monospace; font-size: 0.85rem; box-sizing: border-box;
 }
+#sidebar-left input[type="color"], #sidebar-right input[type="color"], #selectedCabinetUI input[type="color"] { height: 40px; padding: 0; }
 
-#sidebar-left input[type="color"],
-#sidebar-right input[type="color"],
-#selectedCabinetUI input[type="color"] {
-  height: 40px;
-  padding: 0;
-}
-
-/* Buttons (all sidebars + selected cabinet) */
+/* Buttons - base */
 #sidebar-left button,
 #sidebar-right button,
 #selectedCabinetUI button,
@@ -339,143 +265,243 @@ input, select, textarea {
   transition: 0.2s all;
   margin-top: 5px;
 }
-
 #sidebar-left button:hover,
 #sidebar-right button:hover,
 #selectedCabinetUI button:hover,
 #exportLayout:hover,
-#importLayout:hover {
-  background: #ff66ff;
-}
+#importLayout:hover { background: #ff66ff; }
 
-/* Selected Cabinet: match Cabinet Creator (no card/border) */
+/* Selected Cabinet container */
 #selectedCabinetUI {
-  margin-top: 15px;
-  padding: 0;            /* same as creator (no inner card padding) */
-  border: none;          /* remove the visible border */
-  border-radius: 0;      /* no rounded frame */
-  background: transparent;
-  box-shadow: none;      /* ensure no shadow outline */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  margin-top: 15px; padding: 0; border: none; border-radius: 0; background: transparent; box-shadow: none;
+  display: flex; flex-direction: column; gap: 10px;
 }
 
-/* Keep the heading style consistent with other section titles */
-#selectedCabinetUI h2 {
-  margin-bottom: 10px;
-  font-size: 1rem;
-  color: #ffcc00;
-  border-bottom: 1px solid #444;
-  padding-bottom: 5px;
+/* HR styling */
+#sidebar-left hr, #sidebar-right hr { border: 1px solid #444; margin: 15px 0; }
+
+/* Hide actual file inputs */
+#sidebar-right input[type="file"],
+#selectedCabinetUI input[type="file"] { display: none; }
+
+body.simple-mode * { font-family: Arial, sans-serif !important; }
+
+/* Cabinet name text */
+.cabinet-name {
+  font-size: 0.8rem; font-weight: bold; color: #fff; text-align: center;
+  padding: 0.5px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  transform-origin: center center; pointer-events: none;
 }
 
-/* Inputs & buttons keep the same styles as elsewhere */
-#selectedCabinetUI label {
+/* --- COLOURED ACTION BUTTONS --- */
+#selectedCabinetUI #deselectCabinet { background: #ffcc00 !important; color: #000 !important; }
+#selectedCabinetUI #deselectCabinet:hover { background: #e6b800 !important; color: #000 !important; }
+
+#selectedCabinetUI #duplicateCabinet { background: #28a745 !important; color: #fff !important; }
+#selectedCabinetUI #duplicateCabinet:hover { background: #218838 !important; color: #fff !important; }
+
+#selectedCabinetUI #deleteCabinet { background: #ff4444 !important; color: #fff !important; }
+#selectedCabinetUI #deleteCabinet:hover { background: #e03636 !important; color: #fff !important; }
+
+/* Add Cabinet & Update Room GREEN */
+#addCabinet, #updateRoom { background: #28a745 !important; color: #fff !important; }
+#addCabinet:hover, #updateRoom:hover { background: #218838 !important; }
+body.simple-mode #addCabinet, body.simple-mode #updateRoom { background: #28a745 !important; color: #fff !important; border: 2px solid #333 !important; }
+body.simple-mode #addCabinet:hover, body.simple-mode #updateRoom:hover { background: #218838 !important; }
+
+/* Toggle buttons (stacked) */
+.toggle-row { display: flex; flex-direction: column; gap: 10px; }
+#selectedCabinetUI .toggle-row > button { margin-top: 0 !important; width: 100%; padding: 12px; }
+#selectedCabinetUI #snapToggleBtn { background: #00aaff !important; color: #fff !important; }
+#selectedCabinetUI #snapToggleBtn.off { background: #555 !important; color: #fff !important; }
+#selectedCabinetUI #snapToggleBtn:hover { filter: brightness(0.9); }
+#selectedCabinetUI #lockToggleBtn { background: #6c6c6c !important; color: #fff !important; }
+#selectedCabinetUI #lockToggleBtn.on { background: #e03636 !important; color: #fff !important; }
+#selectedCabinetUI #lockToggleBtn:hover { filter: brightness(0.9); }
+
+/* Room Import = Blue, Export = Orange */
+#importLayoutBtn { background: #00aaff !important; color: #fff !important; }
+#importLayoutBtn:hover { background: #008ed1 !important; }
+#exportLayout { background: #ff9800 !important; color: #fff !important; }
+#exportLayout:hover { background: #e68900 !important; }
+body.simple-mode #importLayoutBtn, body.simple-mode #exportLayout { border: 2px solid #333 !important; }
+
+/* NEW: Cabinet Import/Export match room colours */
+#exportCabinetBtn { background: #ff9800 !important; color: #fff !important; }
+#exportCabinetBtn:hover { background: #e68900 !important; }
+#importCabinetBtn { background: #00aaff !important; color: #fff !important; }
+#importCabinetBtn:hover { background: #008ed1 !important; }
+body.simple-mode #exportCabinetBtn, body.simple-mode #importCabinetBtn { border: 2px solid #333 !important; }
+
+/* ===== Simple Mode compact spacing (reduced padding) ===== */
+body.simple-mode header input { padding: 6px !important; }
+
+body.simple-mode #sidebar-left input[type="number"],
+body.simple-mode #sidebar-left input[type="text"],
+body.simple-mode #sidebar-left input[type="color"],
+body.simple-mode #sidebar-right input[type="number"],
+body.simple-mode #sidebar-right input[type="text"],
+body.simple-mode #sidebar-right input[type="color"],
+body.simple-mode #selectedCabinetUI input[type="number"],
+body.simple-mode #selectedCabinetUI input[type="text"],
+body.simple-mode #selectedCabinetUI input[type="color"] {
+  padding: 6px !important;        /* was 8px */
+}
+
+body.simple-mode #sidebar-left button,
+body.simple-mode #sidebar-right button,
+body.simple-mode #selectedCabinetUI button,
+body.simple-mode #exportLayout,
+body.simple-mode #importLayout,
+body.simple-mode #importLayoutBtn,
+body.simple-mode #exportCabinetBtn,
+body.simple-mode #importCabinetBtn {
+  padding: 10px !important;       /* was 12px */
+}
+
+/* Keep toggle buttons visually consistent in Simple Mode */
+body.simple-mode #selectedCabinetUI .toggle-row > button {
+  padding: 10px !important;
+}
+
+/* Reduce cabinet name font size in Arcade Mode (default view) */
+body:not(.simple-mode) .cabinet-name {
+  font-size: 0.6rem; /* smaller than before */
+}
+
+/* Room wall input layout */
+.wall-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.wall-inputs label {
   display: flex;
   flex-direction: column;
   font-size: 0.8rem;
-  margin-bottom: 10px;
 }
 
-#selectedCabinetUI input[type="number"],
-#selectedCabinetUI input[type="text"],
-#selectedCabinetUI input[type="color"] {
-  width: 100%;
-  padding: 8px;
+.wall-inputs input {
   margin-top: 4px;
+  padding: 8px;
   border-radius: 4px;
   border: none;
   font-family: 'Press Start 2P', monospace;
   font-size: 0.85rem;
   box-sizing: border-box;
-}
-
-#selectedCabinetUI input[type="color"] {
-  height: 40px;
-  padding: 0;
-}
-
-#selectedCabinetUI button {
   width: 100%;
-  padding: 12px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.85rem;
-  border-radius: 6px;
-  border: none;
-  background: #ff00ff;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.2s all;
-  margin-top: 5px;
 }
 
-#selectedCabinetUI button:hover {
-  background: #ff66ff;
-}
-
-
-/* HR styling */
-#sidebar-left hr, #sidebar-right hr {
-  border: 1px solid #444;
-  margin: 15px 0;
-}
-
-/* File input for import neatly */
-#sidebar-right input[type="file"] {
-  margin-top: 5px;
-  padding: 6px 0;
-}
-
-/* Import Button styled like Export */
-#importLayoutLabel {
-  display: inline-block;
-  padding: 10px 20px;
-  background: #ff00ff;
-  color: #fff;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.85rem;
-  border-radius: 6px;
-  text-align: center;
-  cursor: pointer;
-  transition: 0.2s all;
-}
-
-#importLayoutLabel:hover {
-  background: #ff66ff;
-}
-
-/* Hide actual file input */
-#sidebar-right input[type="file"] {
-  display: none;
-}
-
-body.simple-mode * { font-family: Arial, sans-serif !important; }
-
-.cabinet {
-  position: absolute;
-  border: 2px solid #ffcc00;
-  cursor: move;
+/* ===================== SAVED ROOMS SECTION ===================== */
+.saved-rooms {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  user-select: none;
-  overflow: hidden; /* prevents text spilling out */
-  transform-origin: center center;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  max-height: 450px;         /* Taller view for multiple saves */
+  overflow-y: auto;
+  background: #111;
+  border: 2px solid #ff00ff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 0 10px #ff00ff44;
 }
 
-/* Cabinet name text */
-.cabinet-name {
-  font-size: 0.8rem;
-  font-weight: bold;
+/* Individual saved room entry */
+.saved-room-entry {
+  background: #1a1a1a;
+  border: 2px solid #00ffff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
   color: #fff;
-  text-align: center;
-  padding: 0.5px;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transform-origin: center center;
-  pointer-events: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.saved-room-entry:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
+
+/* Buttons inside entries */
+.saved-room-entry button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  padding: 5px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: 0.2s all;
+}
+
+.load-btn {
+  background: #28a745;
+  color: #fff;
+  border: 2px solid #1d7c34;
+}
+.load-btn:hover { background: #218838; }
+
+.delete-btn {
+  background: #ff4444;
+  color: #fff;
+  border: 2px solid #b53030;
+}
+.delete-btn:hover { background: #e03636; }
+
+/* Scrollbar styling consistent with theme */
+.saved-rooms::-webkit-scrollbar {
+  width: 12px;
+}
+.saved-rooms::-webkit-scrollbar-thumb {
+  background: #ff00ff;
+  border-radius: 6px;
+  border: 3px solid #111;
+}
+.saved-rooms::-webkit-scrollbar-thumb:hover {
+  background: #ff66ff;
+}
+
+/* ===================== SIMPLE MODE OVERRIDES ===================== */
+body.simple-mode .saved-rooms {
+  background: #ddd;
+  border: 2px solid #333;
+  box-shadow: none;
+}
+
+body.simple-mode .saved-room-entry {
+  background: #fff;
+  border: 2px solid #000;
+  color: #000;
+}
+
+body.simple-mode .saved-room-entry:hover {
+  background: #f2f2f2;
+  transform: none;
+}
+
+body.simple-mode .saved-room-entry button {
+  font-family: Arial, sans-serif;
+  font-size: 0.7rem;
+  border: 2px solid #333;
+}
+
+body.simple-mode .load-btn {
+  background: #28a745;
+  color: #fff;
+}
+body.simple-mode .load-btn:hover {
+  background: #218838;
+}
+
+body.simple-mode .delete-btn {
+  background: #ff4444;
+  color: #fff;
+}
+body.simple-mode .delete-btn:hover {
+  background: #e03636;
 }

@@ -16,7 +16,7 @@
   </header>
 
   <div id="container">
-    <!-- LEFT SIDEBAR: Cabinet Manager -->
+    <!-- LEFT SIDEBAR -->
     <div id="sidebar-left">
       <h2>Cabinet Creator</h2>
       <label>Name: <input type="text" id="cabinetName" value="Cabinet"></label>
@@ -28,37 +28,60 @@
       <hr>
 
       <div id="selectedCabinetUI" style="display: none;">
-        <h2>Selected Cabinet</h2>
+        <h2>Cabinet Details</h2>
         <label>Name: <input type="text" id="selectedName"></label>
         <label>Width (M): <input type="number" id="selectedWidth" min="0.5" step="0.1"></label>
         <label>Length (M): <input type="number" id="selectedHeight" min="0.5" step="0.1"></label>
         <label>Rotation (°): <input type="number" id="selectedRotation" min="0" max="359" step="1"></label>
         <label>Colour: <input type="color" id="selectedColor"></label>
-        <label><input type="checkbox" id="snapToggle" checked> Enable snapping</label>
+
+        <div class="toggle-row">
+          <button id="snapToggleBtn" class="toggle-btn">Snapping: ON</button>
+          <button id="lockToggleBtn" class="toggle-btn">Unlocked</button>
+        </div>
+
         <button id="deselectCabinet">Deselect</button>
+        <button id="duplicateCabinet">Duplicate</button>
         <button id="deleteCabinet">Delete Cabinet</button>
       </div>
+
+      <hr>
+
+      <h2>Cabinet Export / Import</h2>
+      <button id="exportCabinetBtn">Export Cabinet</button>
+      <button id="importCabinetBtn">Import Cabinet</button>
+      <input type="file" id="importCabinetFile" accept=".json" style="display:none;">
     </div>
 
-    <!-- CENTER: Room -->
+    <!-- CENTER ROOM -->
     <div id="roomContainer">
       <div id="room"></div>
     </div>
 
-    <!-- RIGHT SIDEBAR: Room Manager + Import/Export -->
+    <!-- RIGHT SIDEBAR -->
     <div id="sidebar-right">
       <h2>Room Dimensions</h2>
       <label>Width (M): <input type="number" id="roomWidth" value="10" min="1"></label>
       <label>Length (M): <input type="number" id="roomHeight" value="8" min="1"></label>
-      <label>Grid Size (M): <input type="number" id="gridSize" value="1" min="0.1" step="0.1"></label>
+      <label>Grid Size (M): <input type="number" id="gridSize" value="0.5" min="0.1" step="0.1"></label>
       <button id="updateRoom">Update Room</button>
 
       <hr>
 
+      <h2>Saved Rooms</h2>
+      <button id="saveRoomBtn">Save Current Room</button>
+      <div id="savedRoomsList" class="saved-rooms"></div>
+
+      <hr>
+
       <h2>Import / Export</h2>
-<button id="exportLayout">Export Room</button>
-<button id="importLayoutBtn">Import Room</button>
-<input type="file" id="importFile" accept=".json" style="display: none;">
+      <button id="exportLayout">Export Room</button>
+      <button id="importLayoutBtn">Import Room</button>
+      <input type="file" id="importFile" accept=".json" style="display: none;">
+
+
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
