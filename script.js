@@ -411,12 +411,18 @@ function enableDragging(el) {
     offsetY = e.offsetY;
   });
 
-  document.addEventListener("mousemove", e => {
-    if (!isDragging) return;
+document.addEventListener("mousemove", e => {
+  if (!isDragging) return;
 
-    const rect = room.getBoundingClientRect();
-    let newX = e.clientX - rect.left - offsetX;
-    let newY = e.clientY - rect.top - offsetY;
+  const rect = room.getBoundingClientRect();
+
+  // Adjust mouse coordinates for zoom level
+  const adjustedX = (e.clientX - rect.left - offsetX) / roomZoom;
+  const adjustedY = (e.clientY - rect.top - offsetY) / roomZoom;
+
+  let newX = adjustedX;
+  let newY = adjustedY;
+
 
     let snappedToCabinet = false;
 
@@ -644,7 +650,7 @@ if (hiddenDuplicateBtn) {
 }
 
 /* ---------- ROOM EXPORT LAYOUT ---------- */
-document.getElementById("exportLayout").addEventListener("click", () => {
+document.getElementById("exportLayout").addEventListener("click", async () => {
   const roomWidth = parseFloat(document.getElementById("roomWidth").value);
   const roomHeight = parseFloat(document.getElementById("roomHeight").value);
   const gridSizeVal = parseFloat(document.getElementById("gridSize").value);
@@ -674,7 +680,11 @@ document.getElementById("exportLayout").addEventListener("click", () => {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(a.href);
+
+  //New popup message
+  await showPopup(`Room "${safeTitle}" exported successfully!`, "OK", "");
 });
+
 
 /* ---------- ROOM IMPORT LAYOUT ---------- */
 const importBtn = document.getElementById("importLayoutBtn");
@@ -904,7 +914,7 @@ function loadSavedRoomsList() {
     const loadBtn = document.createElement("button");
     loadBtn.textContent = "Load";
     loadBtn.classList.add("load-btn");
-    // ✅ New: Confirm before loading room
+    //New: Confirm before loading room
     loadBtn.addEventListener("click", async () => { 
       await confirmAndLoadRoom(name); 
     });
@@ -1244,6 +1254,7 @@ if (exportPngBtn) {
       await showPopup("html2canvas not found. Please include it on the page.", "OK", "");
       return;
     }
+
     const roomEl = document.getElementById("room");
     const prevCursor = document.body.style.cursor;
     document.body.style.cursor = "wait";
@@ -1256,14 +1267,18 @@ if (exportPngBtn) {
 
     document.body.style.cursor = prevCursor;
 
-    const link = document.createElement("a");
     const titleVal = (document.getElementById("titleInput").value || "Arcade Layout").trim();
     const safeTitle = titleVal.replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, " ");
+    const link = document.createElement("a");
     link.download = `${safeTitle}_Layout.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
+
+    // ✅ New popup message
+    await showPopup(`Room "${safeTitle}" exported as PNG!`, "OK", "");
   });
 }
+
 
 /* ===== DELETE SELECTED CABINET WITH KEYBOARD ===== */
 document.addEventListener("keydown", async (e) => {
@@ -1373,26 +1388,42 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================
-   ZOOM CONTROLS FOR ROOM VIEW
+   ZOOM CONTROLS FOR ROOM VIEW – PERFECT CENTER + SCROLL PAD
    ========================================================= */
 const zoomInBtn = document.getElementById("zoomInBtn");
 const zoomOutBtn = document.getElementById("zoomOutBtn");
+const roomContainer = document.getElementById("roomContainer");
 let roomZoom = 1;
 
 function applyRoomZoom() {
   room.style.transform = `scale(${roomZoom})`;
   room.style.transformOrigin = "center center";
+
+  // Center room visually inside container after zoom
+  const roomRect = room.getBoundingClientRect();
+  const containerRect = roomContainer.getBoundingClientRect();
+
+  // Calculate scroll offset to keep room centered
+  const scrollLeft = (room.scrollWidth * roomZoom - containerRect.width) / 2;
+  const scrollTop  = (room.scrollHeight * roomZoom - containerRect.height) / 2;
+
+  // Add a little buffer for smooth edge access
+  roomContainer.scrollLeft = Math.max(scrollLeft, 0);
+  roomContainer.scrollTop  = Math.max(scrollTop, 0);
 }
 
 if (zoomInBtn && zoomOutBtn) {
   zoomInBtn.addEventListener("click", () => {
-    roomZoom = Math.min(roomZoom + 0.1, 3); // cap at 300%
+    roomZoom = Math.min(roomZoom + 0.1, 3);
     applyRoomZoom();
   });
 
   zoomOutBtn.addEventListener("click", () => {
-    roomZoom = Math.max(roomZoom - 0.1, 0.3); // min 30%
+    roomZoom = Math.max(roomZoom - 0.1, 0.3);
     applyRoomZoom();
   });
 }
+
+applyRoomZoom();
+
 

@@ -279,7 +279,6 @@ header input {
   box-sizing: border-box;
 }
 
-/* Room container (center) */
 #roomContainer {
   flex: 1;
   overflow: auto;
@@ -291,7 +290,7 @@ header input {
 /* Room itself */
 #room {
   background: #222;
-  position: relative;
+  position: absolute; /* Allows centering math via left/top */
   box-sizing: content-box;
   border: 4px solid #00ffff;
   min-width: max-content;
@@ -2285,18 +2284,45 @@ body.simple-mode.dark-mode #sidebar-right input[type="color"]:focus {
   box-shadow: 0 0 6px #333;
 }
 
-/* Bottom Cabinet Details Bar text fix */
+/* =========================================================
+   SIMPLE MODE - DARK MODE CABINET DETAILS BAR FIX
+   ========================================================= */
+
+/* Keep white text across the whole bar */
 body.simple-mode.dark-mode #cabinetDetailsBar,
 body.simple-mode.dark-mode #cabinetDetailsBar label,
-body.simple-mode.dark-mode #cabinetDetailsBar input,
 body.simple-mode.dark-mode #cabinetDetailsBar button {
-  color: #fff !important;     /* force white text */
+  color: #fff !important;
 }
 
+/* Bar background and border */
 body.simple-mode.dark-mode #cabinetDetailsBar {
-  background: #181818 !important;
+  background: #2a2a2a !important;  /* darker neutral grey */
   border: 2px solid #555 !important;
 }
+
+/* Input boxes — always visible dark grey */
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="text"],
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="number"],
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="color"] {
+  background: #3a3a3a !important;   /* the same shade you liked on hover */
+  color: #fff !important;           /* white text */
+  border: 1px solid #666 !important;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Slight feedback when hovered or focused */
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="text"]:hover,
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="number"]:hover,
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="color"]:hover,
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="text"]:focus,
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="number"]:focus,
+body.simple-mode.dark-mode #cabinetDetailsBar input[type="color"]:focus {
+  background: #4a4a4a !important;  /* lighter grey for feedback */
+  border-color: #888 !important;
+}
+
 
 
 /* =========================================================
@@ -2543,30 +2569,36 @@ body.simple-mode.light-mode #themeModeBtn {
 }
 
 /* =========================================================
-   ZOOM BUTTONS — TIGHT TO TOP-RIGHT OF ROOM AREA
+   FIXED ZOOM CONTROLS — stay in the same place at all times
    ========================================================= */
+
 #zoomControls {
-  position: sticky;
-  top: 2px;                 /* minimal top gap */
-  right: 2px;               /* minimal right gap */
+  position: fixed;          /* <-- stays anchored to the viewport, never moves */
+  top: 150px;               /* <-- just under your main header */
+  right: 320px;             /* <-- aligns just to the left of the right sidebar (300px wide + 40px padding) */
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;                 /* tiny space between + and - */
-  z-index: 100;
-  margin-left: auto;
-  width: fit-content;
+  gap: 6px;
+  z-index: 50;              /* keeps above the room content but below modals */
   pointer-events: auto;
 }
 
 #zoomControls button {
-  width: 30px;              /* compact */
-  height: 30px;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.75rem;
-  border-radius: 3px;
-  border: none;
+  background: #333;
+  color: #fff;
+  border: 2px solid #555;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#zoomControls button:hover {
+  background: #555;
+  transform: scale(1.05);
 }
 
 /* === ARCADE MODE === */
@@ -2639,4 +2671,3 @@ body:not(.simple-mode).light-mode .grid-line {
 body.simple-mode.light-mode .grid-line {
   background: rgba(0, 0, 0, 0.35); /* even a touch darker for clarity */
 }
-
