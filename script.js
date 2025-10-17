@@ -1372,4 +1372,27 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+/* =========================================================
+   ZOOM CONTROLS FOR ROOM VIEW
+   ========================================================= */
+const zoomInBtn = document.getElementById("zoomInBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+let roomZoom = 1;
+
+function applyRoomZoom() {
+  room.style.transform = `scale(${roomZoom})`;
+  room.style.transformOrigin = "center center";
+}
+
+if (zoomInBtn && zoomOutBtn) {
+  zoomInBtn.addEventListener("click", () => {
+    roomZoom = Math.min(roomZoom + 0.1, 3); // cap at 300%
+    applyRoomZoom();
+  });
+
+  zoomOutBtn.addEventListener("click", () => {
+    roomZoom = Math.max(roomZoom - 0.1, 0.3); // min 30%
+    applyRoomZoom();
+  });
+}
 

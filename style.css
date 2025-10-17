@@ -2541,3 +2541,102 @@ body.simple-mode.dark-mode #themeModeBtn,
 body.simple-mode.light-mode #themeModeBtn {
   font-family: system-ui, Arial, sans-serif !important;
 }
+
+/* =========================================================
+   ZOOM BUTTONS — TIGHT TO TOP-RIGHT OF ROOM AREA
+   ========================================================= */
+#zoomControls {
+  position: sticky;
+  top: 2px;                 /* minimal top gap */
+  right: 2px;               /* minimal right gap */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;                 /* tiny space between + and - */
+  z-index: 100;
+  margin-left: auto;
+  width: fit-content;
+  pointer-events: auto;
+}
+
+#zoomControls button {
+  width: 30px;              /* compact */
+  height: 30px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+}
+
+/* === ARCADE MODE === */
+
+/* Arcade Dark */
+body:not(.simple-mode).dark-mode #zoomControls button {
+  background: #ff00ff;
+  color: #fff;
+}
+body:not(.simple-mode).dark-mode #zoomControls button:hover {
+  background: #e600e6;
+}
+
+/* Arcade Light */
+body:not(.simple-mode).light-mode #zoomControls button {
+  background: #ff88ff;
+  color: #000;
+  border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode #zoomControls button:hover {
+  background: #ff66ff;
+}
+
+/* === SIMPLE MODE === */
+body.simple-mode #zoomControls button {
+  font-family: system-ui, Arial, sans-serif;
+}
+
+/* Simple Mode - Dark */
+body.simple-mode.dark-mode #zoomControls button {
+  background: #444;
+  color: #fff;
+  border: 2px solid #777;
+}
+body.simple-mode.dark-mode #zoomControls button:hover {
+  background: #666;
+}
+
+/* Simple Mode - Light */
+body.simple-mode.light-mode #zoomControls button {
+  background: #ddd;
+  color: #000;
+  border: 2px solid #333;
+}
+body.simple-mode.light-mode #zoomControls button:hover {
+  background: #bbb;
+}
+
+
+/* =========================================================
+   GRID LINE VISIBILITY IMPROVEMENTS
+   ========================================================= */
+
+/* Default (keeps your dark mode behaviour unchanged) */
+.grid-line {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.15); /* subtle for dark backgrounds */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === Light Modes: make grid darker for better contrast === */
+
+/* Arcade Light Mode */
+body:not(.simple-mode).light-mode .grid-line {
+  background: rgba(0, 0, 0, 0.25); /* slightly darker grid for light backgrounds */
+}
+
+/* Simple Light Mode */
+body.simple-mode.light-mode .grid-line {
+  background: rgba(0, 0, 0, 0.35); /* even a touch darker for clarity */
+}
+
