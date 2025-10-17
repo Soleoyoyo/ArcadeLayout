@@ -7,6 +7,31 @@ body {
   overflow: auto;
 }
 
+/* Default to Simple Dark Mode look before JS runs */
+body.simple-mode:not(.light-mode) {
+    background: #202020;
+    color: #fff;
+}
+
+/* Prevent white flash when switching modes */
+html, body {
+    background-color: #1a1a1a; /* safe dark default */
+    transition: background-color 0.25s ease, background 0.25s ease;
+}
+
+/* Ensure light modes override immediately */
+body.light-mode {
+    background-color: #f7f7f7 !important;
+    transition: none !important;
+}
+
+/* Smooth fade when switching to dark */
+body.dark-mode {
+    background-color: #1a1a1a !important;
+    transition: none !important;
+}
+
+
 header {
   text-align: center;
   padding: 20px 10px 10px;
@@ -504,4 +529,996 @@ body.simple-mode .delete-btn {
 }
 body.simple-mode .delete-btn:hover {
   background: #e03636;
+}
+
+/* Floating cabinet details panel */
+.cabinet-details-panel {
+  position: absolute;           /* now inside #room, so it uses room coords */
+  background: #202020;
+  border: 2px solid #444;
+  border-radius: 12px;
+  padding: 14px 18px;
+  width: 230px;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  opacity: 0;
+  transform: scale(0.8) translateY(-10px);
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 9999;
+}
+
+.cabinet-details-panel.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+.cabinet-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: move;                 /* drag handle */
+}
+
+.cabinet-details-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #ffcc00;
+}
+
+.cabinet-details-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.cabinet-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cabinet-details-content label {
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+.cabinet-details-content input {
+  background: #2a2a2a;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #fff;
+  padding: 4px 6px;
+  font-size: 0.85rem;
+}
+
+.cabinet-actions {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  gap: 4px;
+}
+
+.cabinet-actions button {
+  font-family: inherit;
+  background: #444;
+  color: #fff;
+  border: 1px solid #666;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 5px 6px;
+  font-size: 0.8rem;
+}
+
+.cabinet-actions button:hover {
+  background: #555;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+/* Simple mode overrides */
+body.simple-mode .cabinet-details-panel {
+  background: #fff;
+  color: #000;
+  border: 2px solid #333;
+  box-shadow: none;
+}
+body.simple-mode .cabinet-details-content input {
+  background: #fff;
+  color: #000;
+  border: 2px solid #333;
+}
+body.simple-mode .cabinet-details-header h3 { color: #000; }
+body.simple-mode .cabinet-actions button { border: 2px solid #333; }
+
+/* Reset & base */
+body {
+  margin: 0;
+  font-family: 'Press Start 2P', monospace;
+  background: #1a1a1a;
+  color: #fff;
+  overflow: auto;
+}
+
+header {
+  text-align: center;
+  padding: 20px 10px 10px;
+  background: linear-gradient(270deg, #ff00ff, #00ffff, #ffff00, #ff0000);
+  background-size: 800% 800%;
+  animation: rainbow 12s ease infinite;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  text-align: center;
+  color: #fff;
+  -webkit-text-stroke: 1px black;
+  text-shadow: 2px 2px 0 #000,
+               -2px 2px 0 #000,
+                2px -2px 0 #000,
+               -2px -2px 0 #000;
+}
+
+#titleLabel {
+  font-size: 0.8rem;
+  color: #fff;
+  -webkit-text-stroke: 0.5px black;
+  text-shadow: 1px 1px 0 #000,
+               -1px 1px 0 #000,
+                1px -1px 0 #000,
+               -1px -1px 0 #000;
+  margin-top: 5px;
+}
+
+header input {
+  font-size: 0.85rem;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  width: 280px;
+  text-align: center;
+}
+
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Container */
+#container {
+  display: flex;
+  height: calc(100vh - 120px);
+  overflow: auto;
+}
+
+/* Sidebars */
+#sidebar-left, #sidebar-right {
+  width: 300px;
+  background: #111;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+#sidebar-left { border-right: 3px solid #ff00ff; }
+#sidebar-right { border-left: 3px solid #ff00ff; }
+
+/* Room container (center) */
+#roomContainer {
+  flex: 1;
+  overflow: auto;
+  padding: 40px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Room itself */
+#room {
+  background: #222;
+  position: absolute; /* Allows centering math via left/top */
+  box-sizing: content-box;
+  border: 4px solid #00ffff;
+  min-width: max-content;
+  min-height: max-content;
+}
+
+/* Grid lines */
+.grid-line {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+/* Cabinets */
+.cabinet {
+  position: absolute;
+  border: 2px solid #ffcc00;
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  user-select: none;
+  box-sizing: border-box;
+  font-size: 0.8rem;
+  padding: 6px;
+  transition: none;
+  transform-origin: center center;
+}
+
+.cabinet.selected { outline: 3px solid #ff00ff; }
+.cabinet.locked { cursor: not-allowed; opacity: 0.95; }
+
+/* Floating cabinet details panel */
+.cabinet-details-panel {
+  position: absolute;           /* inside #room */
+  background: #202020;
+  border: 2px solid #444;
+  border-radius: 12px;
+  padding: 14px 18px;
+  width: 230px;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  opacity: 0;
+  transform: scale(0.8) translateY(-10px);
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 9999;
+}
+
+.cabinet-details-panel.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+.cabinet-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: move; /* drag handle */
+}
+
+.cabinet-details-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #ffcc00;
+}
+
+.cabinet-details-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.cabinet-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cabinet-details-content label {
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+.cabinet-details-content input {
+  background: #2a2a2a;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #fff;
+  padding: 4px 6px;
+  font-size: 0.85rem;
+}
+
+.cabinet-actions {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  gap: 4px;
+}
+.cabinet-actions button {
+  background: #444;
+  color: #fff;
+  border: 1px solid #666;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 5px 6px;
+  font-size: 0.8rem;
+}
+.cabinet-actions button:hover { background: #555; }
+
+/* Simple mode */
+body.simple-mode {
+  font-family: Arial, sans-serif;
+  background: #e0e0e0;
+  color: #000;
+}
+body.simple-mode header { background: #bbb; animation: none; }
+body.simple-mode #sidebar-left, body.simple-mode #sidebar-right { background: #ddd; border-color: #333; }
+body.simple-mode #room { border: 3px solid #000; background: #fff; }
+body.simple-mode .cabinet { border: 2px solid #000; color: #000; }
+body.simple-mode .cabinet-details-panel { background: #fff; color: #000; border: 2px solid #333; box-shadow: none; }
+body.simple-mode .cabinet-details-content input { background: #fff; color: #000; border: 2px solid #333; }
+
+/* ===================== SAVED CABINETS SECTION ===================== */
+.saved-cabinets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  max-height: 350px;
+  overflow-y: auto;
+  background: #111;
+  border: 2px solid #ff00ff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 0 10px #ff00ff44;
+}
+
+.saved-cabinet-entry {
+  background: #1a1a1a;
+  border: 2px solid #00ffff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #fff;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.saved-cabinet-entry:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
+
+.saved-cabinet-entry button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  padding: 5px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: 0.2s all;
+}
+
+.load-cabinet-btn {
+  background: #28a745;
+  color: #fff;
+  border: 2px solid #1d7c34;
+}
+.load-cabinet-btn:hover { background: #218838; }
+
+.delete-cabinet-btn {
+  background: #ff4444;
+  color: #fff;
+  border: 2px solid #b53030;
+}
+.delete-cabinet-btn:hover { background: #e03636; }
+
+body.simple-mode .saved-cabinets {
+  background: #ddd;
+  border: 2px solid #333;
+  box-shadow: none;
+}
+body.simple-mode .saved-cabinet-entry {
+  background: #fff;
+  border: 2px solid #000;
+  color: #000;
+}
+body.simple-mode .saved-cabinet-entry:hover { background: #f2f2f2; }
+body.simple-mode .saved-cabinet-entry button {
+  font-family: Arial, sans-serif;
+  font-size: 0.7rem;
+  border: 2px solid #333;
+}
+
+/* ===== Cabinet Details Bar - fixed to window bottom ===== */
+#cabinetDetailsBar {
+  position: fixed; /* <-- change from absolute to fixed */
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(34, 34, 34, 0.95);
+  border: 2px solid #00ffff;
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000; /* ensure above room */
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+#cabinetDetailsBar.disabled {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+  pointer-events: none;
+}
+
+#cabinetDetailsBar .bar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+#cabinetDetailsBar label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+#cabinetDetailsBar input[type="text"],
+#cabinetDetailsBar input[type="number"],
+#cabinetDetailsBar input[type="color"] {
+  margin-top: 5px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  width: 100px;
+  box-sizing: border-box;
+}
+
+/* Buttons row beneath inputs */
+#cabinetDetailsBar .bar-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+#cabinetDetailsBar button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+/* Match the old sidebar colour scheme */
+#barSnapToggle { background: #00aaff; color: #fff; }
+#barSnapToggle.off { background: #555; }
+
+#barLockToggle { background: #6c6c6c; color: #fff; }
+#barLockToggle.on { background: #e03636; color: #fff; }
+
+#barDeselect { background: #ffcc00; color: #000; }
+#barDeselect:hover { background: #e6b800; }
+
+#barDuplicate { background: #28a745; color: #fff; }
+#barDuplicate:hover { background: #218838; }
+
+#barDelete { background: #ff4444; color: #fff; }
+#barDelete:hover { background: #e03636; }
+
+body.simple-mode #cabinetDetailsBar {
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+}
+
+/* ===== Simple Mode contrast boost for cabinet bar ===== */
+body.simple-mode #cabinetDetailsBar {
+  background: #f5f5f5;
+  color: #000;
+  border: 3px solid #222;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+body.simple-mode #cabinetDetailsBar label {
+  color: #000;
+}
+
+body.simple-mode #cabinetDetailsBar input[type="text"],
+body.simple-mode #cabinetDetailsBar input[type="number"],
+body.simple-mode #cabinetDetailsBar input[type="color"] {
+  background: #fff;
+  color: #000;
+  border: 2px solid #333;
+}
+
+body.simple-mode #cabinetDetailsBar button {
+  border: 2px solid #333;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+body.simple-mode #barSnapToggle { background: #00aaff; color: #fff; }
+body.simple-mode #barLockToggle { background: #6c6c6c; color: #fff; }
+body.simple-mode #barLockToggle.on { background: #e03636; }
+body.simple-mode #barDeselect { background: #ffcc00; color: #000; }
+body.simple-mode #barDuplicate { background: #28a745; color: #fff; }
+body.simple-mode #barDelete { background: #ff4444; color: #fff; }
+
+/* ===== Taller color input in cabinet details bar ===== */
+#cabinetDetailsBar input[type="color"] {
+  height: 42px;
+  width: 60px;
+  padding: 0;
+  cursor: pointer;
+  border: 2px solid #00ffff;
+  border-radius: 6px;
+}
+body.simple-mode #cabinetDetailsBar input[type="color"] {
+  border: 2px solid #333;
+  height: 42px;
+}
+
+
+/* ===== Arcade vs Simple Mode text scaling & name input width ===== */
+
+/* Arcade Mode: smaller text for compact retro look */
+body:not(.simple-mode) #cabinetDetailsBar label {
+  font-size: 0.75rem; /* slightly smaller */
+}
+body:not(.simple-mode) #cabinetDetailsBar input[type="text"],
+body:not(.simple-mode) #cabinetDetailsBar input[type="number"],
+body:not(.simple-mode) #cabinetDetailsBar input[type="color"] {
+  font-size: 0.65rem;
+  padding: 5px 6px;
+}
+
+/* Make the Name input longer in both modes */
+#cabinetDetailsBar #barName {
+  width: 180px !important; /* longer name field */
+}
+
+/* Optional: slight width boost for other inputs for consistency */
+#cabinetDetailsBar #barWidth,
+#cabinetDetailsBar #barHeight,
+#cabinetDetailsBar #barRotation {
+  width: 90px;
+}
+
+/* ===== Taller text inputs in Arcade Mode ===== */
+body:not(.simple-mode) #cabinetDetailsBar input[type="text"],
+body:not(.simple-mode) #cabinetDetailsBar input[type="number"] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: 40px; /* roughly 1.75x taller than before */
+  font-size: 0.7rem; /* slightly bigger text for readability */
+  box-sizing: border-box;
+}
+
+/* ===== Force old cabinet details section to stay hidden ===== */
+#selectedCabinetUI {
+  display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ===== Taller + Larger text inputs in Arcade Mode ===== */
+body:not(.simple-mode) #cabinetDetailsBar input[type="text"],
+body:not(.simple-mode) #cabinetDetailsBar input[type="number"] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: 40px; /* 1.75x taller */
+  font-size: 0.9rem; /* ~1.35x larger text */
+  box-sizing: border-box;
+}
+
+
+/* Optional: make sure scrolling behaves nicely */
+#roomContainer::-webkit-scrollbar {
+  height: 20px;
+  width: 20px;
+}
+
+
+/* ===== Green Export Room as PNG Button ===== */
+#exportPngBtn {
+  background: #28a745 !important; /* main green for arcade mode */
+  color: #fff !important;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', monospace;
+  transition: 0.2s all;
+}
+
+#exportPngBtn:hover {
+  background: #218838 !important; /* darker green on hover */
+}
+
+/* Match Add Cabinet button in Simple Mode */
+body.simple-mode #exportPngBtn {
+  background: #28A745 !important; /* same as Add Cabinet */
+  color: #fff !important;
+  border: 2px solid #333 !important;
+}
+
+body.simple-mode #exportPngBtn:hover {
+  background: #00b85c !important; /* hover variant */
+}
+
+/* ===== BASE THEME SWITCHING ===== */
+body.dark-mode {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+body.light-mode {
+  background: #f4f4f4;
+  color: #000;
+}
+
+/* ----- ARCADE MODE (Dark + Light) ----- */
+body:not(.simple-mode).dark-mode {
+  background: radial-gradient(circle at center, #1a1a1a 50%, #000);
+  color: #fff;
+}
+
+body:not(.simple-mode).light-mode {
+  background: linear-gradient(180deg, #f7e4ff, #ffe8f0, #fff5cc);
+  color: #111;
+}
+
+body:not(.simple-mode).light-mode header {
+  background: linear-gradient(270deg, #ff8cff, #6effff, #ffff80, #ff8080);
+  color: #000;
+}
+
+/* Arcade buttons (light mode variant) */
+body:not(.simple-mode).light-mode button {
+  background: #ffe066;
+  color: #000;
+  border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode button:hover {
+  background: #ffd633;
+}
+
+/* ----- SIMPLE MODE (Light + Dark) ----- */
+body.simple-mode.light-mode {
+  background: #fff;
+  color: #000;
+}
+
+body.simple-mode.dark-mode {
+  background: #202020;
+  color: #f0f0f0;
+}
+
+/* Simple Mode Dark: invert typical light colors */
+body.simple-mode.dark-mode #sidebar,
+body.simple-mode.dark-mode header {
+  background: #333;
+  color: #fff;
+}
+
+body.simple-mode.dark-mode button {
+  background: #444;
+  color: #fff;
+  border: 2px solid #777;
+}
+body.simple-mode.dark-mode button:hover {
+  background: #555;
+}
+
+/* Adjust bar and room colours for dark simple mode */
+body.simple-mode.dark-mode #cabinetDetailsBar {
+  background: #2a2a2a;
+  border: 2px solid #555;
+  color: #fff;
+}
+
+/* Ensure the room area stays visible across themes */
+#roomContainer {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+#themeModeBtn {
+  position: absolute;
+  top: 50px; /* places it just below the first button (10px + 30–40px height) */
+  right: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: #555;
+  color: #fff;
+  z-index: 20;
+  transition: 0.2s all;
+}
+
+#themeModeBtn:hover {
+  background: #777;
+}
+
+/* Match Simple Mode aesthetic */
+body.simple-mode #themeModeBtn {
+  background: #ddd;
+  color: #000;
+  border: 2px solid #333;
+}
+
+body.simple-mode #themeModeBtn:hover {
+  background: #ccc;
+}
+
+
+/* ===================== THEME FIXES ===================== */
+
+/* --- Dark Mode (default) --- */
+body.dark-mode #sidebar-left,
+body.dark-mode #sidebar-right {
+  background: #111;
+  border-color: #ff00ff;
+}
+
+body.dark-mode #room {
+  background: #222;
+  border: 4px solid #00ffff;
+}
+
+body.dark-mode .grid-line {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Light Mode --- */
+body.light-mode #sidebar-left,
+body.light-mode #sidebar-right {
+  background: #f0f0f0;
+  border-color: #000;
+  color: #000;
+}
+
+body.light-mode #room {
+  background: #fff;
+  border: 4px solid #000;
+}
+
+body.light-mode .grid-line {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons in light mode */
+body.light-mode button {
+  background: #ffe066;
+  color: #000;
+  border: 2px solid #000;
+}
+
+body.light-mode button:hover {
+  background: #ffd633;
+}
+
+/* Cabinet contrast in light mode */
+body.light-mode .cabinet {
+  border: 2px solid #000;
+  color: #000;
+}
+
+/* Cabinet name readable in both themes */
+body.light-mode .cabinet-name {
+  color: #000;
+}
+
+/* =========================================================
+   SIMPLE MODE - DARK MODE FIXES
+   ========================================================= */
+
+/* General text colour */
+body.simple-mode.dark-mode {
+    color: #fff;
+}
+
+/* Sidebar text and backgrounds */
+body.simple-mode.dark-mode #sidebar-left,
+body.simple-mode.dark-mode #sidebar-right {
+    background: #222;
+    border-color: #555;
+    color: #fff;
+}
+
+/* Header text fix */
+body.simple-mode.dark-mode header,
+body.simple-mode.dark-mode header h1,
+body.simple-mode.dark-mode label,
+body.simple-mode.dark-mode h2 {
+    color: #fff;
+}
+
+/* Room area */
+body.simple-mode.dark-mode #room {
+    background: #2a2a2a;
+    border: 3px solid #888;
+}
+
+/* Cabinet Details Bar */
+body.simple-mode.dark-mode #cabinetDetailsBar {
+    background: #2a2a2a;
+    border: 2px solid #555;
+    color: #fff;
+}
+
+/* Saved Rooms & Cabinets containers */
+body.simple-mode.dark-mode .saved-rooms,
+body.simple-mode.dark-mode .saved-cabinets {
+    background: #2a2a2a;
+    border: 2px solid #555;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Entries inside Saved sections */
+body.simple-mode.dark-mode .saved-room-entry,
+body.simple-mode.dark-mode .saved-cabinet-entry {
+    background: #333;
+    border: 2px solid #777;
+    color: #fff;
+}
+
+body.simple-mode.dark-mode .saved-room-entry:hover,
+body.simple-mode.dark-mode .saved-cabinet-entry:hover {
+    background: #3a3a3a;
+}
+
+/* Buttons inside entries */
+body.simple-mode.dark-mode .saved-room-entry button,
+body.simple-mode.dark-mode .saved-cabinet-entry button {
+    background: #444;
+    color: #fff;
+    border: 2px solid #777;
+}
+
+body.simple-mode.dark-mode .saved-room-entry button:hover,
+body.simple-mode.dark-mode .saved-cabinet-entry button:hover {
+    background: #555;
+}
+
+/* =========================================================
+   SIMPLE MODE - DARK MODE TEXT HEADINGS FIX
+   ========================================================= */
+
+/* Side section headings (h2) and labels */
+body.simple-mode.dark-mode #sidebar-left h2,
+body.simple-mode.dark-mode #sidebar-right h2,
+body.simple-mode.dark-mode #sidebar-left label,
+body.simple-mode.dark-mode #sidebar-right label {
+    color: #fff;
+}
+
+/* Title label under main header */
+body.simple-mode.dark-mode #titleLabel {
+    color: #fff;
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+}
+
+/* Sidebar subtext or secondary info */
+body.simple-mode.dark-mode small,
+body.simple-mode.dark-mode span,
+body.simple-mode.dark-mode p {
+    color: #ddd;
+}
+
+/* =========================================================
+   ARCADE MODE - LIGHT MODE FIXES
+   ========================================================= */
+
+/* Side panels - slightly darker background for contrast */
+body:not(.simple-mode).light-mode #sidebar-left,
+body:not(.simple-mode).light-mode #sidebar-right {
+    background: #e0e0e0;
+    border-color: #000;
+    color: #111;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Cabinet Details Bar (bottom UI) */
+body:not(.simple-mode).light-mode #cabinetDetailsBar {
+    background: #ffffff;
+    color: #000;
+    border: 3px solid #000;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+}
+
+body:not(.simple-mode).light-mode #cabinetDetailsBar label {
+    color: #000;
+}
+
+body:not(.simple-mode).light-mode #cabinetDetailsBar input[type="text"],
+body:not(.simple-mode).light-mode #cabinetDetailsBar input[type="number"],
+body:not(.simple-mode).light-mode #cabinetDetailsBar input[type="color"] {
+    background: #fff;
+    color: #000;
+    border: 2px solid #000;
+}
+
+body:not(.simple-mode).light-mode #cabinetDetailsBar button {
+    border: 2px solid #000;
+    color: #000;
+    background: #ffdd55;
+}
+
+body:not(.simple-mode).light-mode #cabinetDetailsBar button:hover {
+    background: #ffcc00;
+}
+
+/* Saved Rooms + Saved Cabinets (Light Mode for Arcade) */
+body:not(.simple-mode).light-mode .saved-rooms,
+body:not(.simple-mode).light-mode .saved-cabinets {
+    background: #f0f0f0;
+    border: 2px solid #000;
+    color: #111;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+body:not(.simple-mode).light-mode .saved-room-entry,
+body:not(.simple-mode).light-mode .saved-cabinet-entry {
+    background: #ffffff;
+    border: 2px solid #000;
+    color: #000;
+}
+
+body:not(.simple-mode).light-mode .saved-room-entry:hover,
+body:not(.simple-mode).light-mode .saved-cabinet-entry:hover {
+    background: #f2f2f2;
+}
+
+/* Buttons inside saved entries */
+body:not(.simple-mode).light-mode .saved-room-entry button,
+body:not(.simple-mode).light-mode .saved-cabinet-entry button {
+    background: #ffdd55;
+    color: #000;
+    border: 2px solid #000;
+}
+
+body:not(.simple-mode).light-mode .saved-room-entry button:hover,
+body:not(.simple-mode).light-mode .saved-cabinet-entry button:hover {
+    background: #ffcc00;
+}
+
+/* =========================================================
+   SIMPLE MODE - LIGHT MODE SIDEBAR CONTRAST IMPROVEMENT
+   ========================================================= */
+
+body.simple-mode.light-mode #sidebar-left,
+body.simple-mode.light-mode #sidebar-right {
+    background: #ccc !important;          /* slightly darker than before */
+    border-color: #333 !important;
+    color: #000 !important;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.15); /* subtle depth */
 }

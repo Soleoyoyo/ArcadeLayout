@@ -9,6 +9,12 @@ let pixelsPerMeter = 100;
 let selectedCabinet = null;
 let cabinets = [];
 
+
+// ===== FORCE DEFAULT THEME =====
+// Ensure the app starts in Simple Dark Mode by default
+document.body.classList.add("dark-mode");
+document.body.classList.remove("light-mode");
+
 /* Global snapping state */
 let snapEnabled = true;
 
@@ -80,29 +86,21 @@ function snapTopLeft(x, y) {
   return { x: nx, y: ny };
 }
 
-/** Clamp within the room bounds. */
-function clampToRoom(el, x, y) {
-  const nx = Math.max(0, Math.min(x, room.clientWidth - el.offsetWidth));
-  const ny = Math.max(0, Math.min(y, room.clientHeight - el.offsetHeight));
-  return { x: nx, y: ny };
-}
-
 /** Get rotation in radians from element dataset (defaults 0). */
 function getRotationRad(el) {
   return ((parseFloat(el.dataset.rotation) || 0) * Math.PI) / 180;
 }
 
-/** Build oriented-rectangle polygon for element if placed at (x,y). */
+/** Build oriented-rectangle polygon for element if placed at (x,y). Uses dataset sizes (in meters) for rotation-accurate hitbox. */
 function getOrientedRect(el, x, y) {
-  const w = el.offsetWidth;
-  const h = el.offsetHeight;
+  const w = (parseFloat(el.dataset.width) || el.offsetWidth / pixelsPerMeter) * pixelsPerMeter;
+  const h = (parseFloat(el.dataset.height) || el.offsetHeight / pixelsPerMeter) * pixelsPerMeter;
   const cx = x + w / 2;
   const cy = y + h / 2;
   const a = getRotationRad(el);
   const cos = Math.cos(a);
   const sin = Math.sin(a);
 
-  // local corners around origin (center)
   const halfW = w / 2, halfH = h / 2;
   const pts = [
     { x: -halfW, y: -halfH }, // top-left
@@ -111,7 +109,6 @@ function getOrientedRect(el, x, y) {
     { x: -halfW, y:  halfH }  // bottom-left
   ];
 
-  // rotate + translate to world
   return pts.map(p => ({
     x: cx + p.x * cos - p.y * sin,
     y: cy + p.x * sin + p.y * cos
@@ -133,15 +130,12 @@ function projectPolygon(axis, poly) {
 function polysOverlapSAT(polyA, polyB) {
   const axes = [];
 
-  // Build axes from polygon edges (perpendicular vectors)
   function addAxes(poly) {
     for (let i = 0; i < poly.length; i++) {
       const p1 = poly[i];
       const p2 = poly[(i + 1) % poly.length];
       const edge = { x: p2.x - p1.x, y: p2.y - p1.y };
-      // normal (perpendicular)
       const axis = { x: -edge.y, y: edge.x };
-      // normalize
       const len = Math.hypot(axis.x, axis.y) || 1;
       axes.push({ x: axis.x / len, y: axis.y / len });
     }
@@ -153,7 +147,6 @@ function polysOverlapSAT(polyA, polyB) {
   for (const axis of axes) {
     const [minA, maxA] = projectPolygon(axis, polyA);
     const [minB, maxB] = projectPolygon(axis, polyB);
-
     // If there is a gap OR they just touch at an endpoint (<= or >=), we treat as NO overlap.
     if (maxA <= minB || maxB <= minA) {
       return false; // Separating axis found → no collision
@@ -165,13 +158,40 @@ function polysOverlapSAT(polyA, polyB) {
 /** True if placing `el` at (x,y) would overlap any other cabinet (edges touching OK). */
 function collidesAt(x, y, el) {
   const polyA = getOrientedRect(el, x, y);
-
   for (const other of cabinets) {
     if (other === el) continue;
-    const polyB = getOrientedRect(other, other.offsetLeft, other.offsetTop);
+    const ox = parseFloat(other.style.left) || 0;
+    const oy = parseFloat(other.style.top) || 0;
+    const polyB = getOrientedRect(other, ox, oy);
     if (polysOverlapSAT(polyA, polyB)) return true;
   }
   return false;
+}
+
+/** Bounds of a polygon */
+function getPolygonBounds(poly) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const p of poly) {
+    if (p.x < minX) minX = p.x;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.y > maxY) maxY = p.y;
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+/** Clamp a ROTATED rect inside room by shifting x/y so its rotated polygon fits perfectly (no wall gaps). */
+function clampToRoomRotated(el, x, y) {
+  const poly = getOrientedRect(el, x, y);
+  const b = getPolygonBounds(poly);
+  let dx = 0, dy = 0;
+
+  if (b.minX < 0) dx = -b.minX;
+  if (b.maxX > room.clientWidth) dx = Math.min(dx, room.clientWidth - b.maxX);
+  if (b.minY < 0) dy = -b.minY;
+  if (b.maxY > room.clientHeight) dy = Math.min(dy, room.clientHeight - b.maxY);
+
+  return { x: x + dx, y: y + dy };
 }
 
 /* ---------- Room ---------- */
@@ -299,8 +319,8 @@ function enableDragging(el) {
     if (snapEnabled) {
       const threshold = 10;
 
-      // NOTE: The following edge-to-edge snapping still uses AABB edges for simplicity.
-      // It remains visually helpful even when other cabinets are rotated.
+      // Edge-to-edge snapping using AABB of targets (kept simple),
+      // then final clamp uses rotated geometry to avoid gaps.
       cabinets.forEach(cabinet => {
         if (cabinet === el) return;
 
@@ -332,8 +352,8 @@ function enableDragging(el) {
       }
     }
 
-    // Clamp within room
-    ({ x: newX, y: newY } = clampToRoom(el, newX, newY));
+    // Clamp within room using ROTATED geometry to eliminate wall gaps
+    ({ x: newX, y: newY } = clampToRoomRotated(el, newX, newY));
 
     // --- COLLISION PREVENTION with ROTATION (edges can touch) ---
     if (!collidesAt(newX, newY, el)) {
@@ -342,17 +362,20 @@ function enableDragging(el) {
       lastValidX = newX;
       lastValidY = newY;
     } else {
-      // Try slide along one axis if possible
-      const canMoveX = !collidesAt(newX, lastValidY, el);
-      const canMoveY = !collidesAt(lastValidX, newY, el);
+      // Try slide along one axis if possible (also clamp with rotated geometry)
+      let tryX = clampToRoomRotated(el, newX, lastValidY);
+      let tryY = clampToRoomRotated(el, lastValidX, newY);
 
-      if (canMoveX) {
-        el.style.left = newX + "px";
-        lastValidX = newX;
-      }
-      if (canMoveY) {
-        el.style.top = newY + "px";
-        lastValidY = newY;
+      if (!collidesAt(tryX.x, tryX.y, el)) {
+        el.style.left = tryX.x + "px";
+        el.style.top = tryX.y + "px";
+        lastValidX = tryX.x;
+        lastValidY = tryX.y;
+      } else if (!collidesAt(tryY.x, tryY.y, el)) {
+        el.style.left = tryY.x + "px";
+        el.style.top = tryY.y + "px";
+        lastValidX = tryY.x;
+        lastValidY = tryY.y;
       }
       // Otherwise, stay at last valid
     }
@@ -423,16 +446,18 @@ function updateSelectedUIFromCabinet(cab) {
       const nameEl = selectedCabinet.querySelector(".cabinet-name");
       if (nameEl) nameEl.style.transform = "rotate(" + (-r) + "deg)";
 
-      // After rotation change, re-snap TOP-LEFT to grid (if enabled)
+      // After rotation change, keep within room using rotated clamp (prevents new gaps)
+      let x = parseFloat(selectedCabinet.style.left) || 0;
+      let y = parseFloat(selectedCabinet.style.top) || 0;
+
       if (snapEnabled) {
-        let x = parseFloat(selectedCabinet.style.left) || 0;
-        let y = parseFloat(selectedCabinet.style.top) || 0;
         const g = snapTopLeft(x, y);
-        ({ x, y } = clampToRoom(selectedCabinet, g.x, g.y));
-        if (!collidesAt(x, y, selectedCabinet)) {
-          selectedCabinet.style.left = x + "px";
-          selectedCabinet.style.top = y + "px";
-        }
+        x = g.x; y = g.y;
+      }
+      ({ x, y } = clampToRoomRotated(selectedCabinet, x, y));
+      if (!collidesAt(x, y, selectedCabinet)) {
+        selectedCabinet.style.left = x + "px";
+        selectedCabinet.style.top = y + "px";
       }
       return;
     }
@@ -470,7 +495,7 @@ document.getElementById("duplicateCabinet").addEventListener("click", () => {
   const rot = parseFloat(selectedCabinet.dataset.rotation) || 0;
   copy.style.transform = "rotate(" + rot + "deg)";
 
-  // position: offset by 10px, then snap top-left if snapping is ON
+  // position: offset by 10px, then snap/clamp
   let newX = (parseFloat(selectedCabinet.style.left) || 0) + 10;
   let newY = (parseFloat(selectedCabinet.style.top) || 0) + 10;
 
@@ -479,18 +504,7 @@ document.getElementById("duplicateCabinet").addEventListener("click", () => {
     newX = g.x; newY = g.y;
   }
 
-  ({ x: newX, y: newY } = clampToRoom(copy, newX, newY));
-  copy.style.left = newX + "px";
-  copy.style.top = newY + "px";
-
-  // name element
-  const nameEl = document.createElement("div");
-  nameEl.classList.add("cabinet-name");
-  nameEl.textContent = selectedCabinet.dataset.name;
-  nameEl.style.transform = "rotate(" + (-rot) + "deg)";
-  copy.appendChild(nameEl);
-
-  // dataset copy
+  // dataset copy (needed before rotated clamp/collision checks)
   copy.dataset.name = selectedCabinet.dataset.name;
   copy.dataset.width = selectedCabinet.dataset.width;
   copy.dataset.height = selectedCabinet.dataset.height;
@@ -498,6 +512,16 @@ document.getElementById("duplicateCabinet").addEventListener("click", () => {
   copy.dataset.rotation = rot;
   copy.dataset.locked = selectedCabinet.dataset.locked || "false";
   copy.classList.toggle("locked", copy.dataset.locked === "true");
+
+  ({ x: newX, y: newY } = clampToRoomRotated(copy, newX, newY));
+  copy.style.left = newX + "px";
+  copy.style.top = newY + "px";
+
+  const nameEl = document.createElement("div");
+  nameEl.classList.add("cabinet-name");
+  nameEl.textContent = selectedCabinet.dataset.name;
+  nameEl.style.transform = "rotate(" + (-rot) + "deg)";
+  copy.appendChild(nameEl);
 
   room.appendChild(copy);
   cabinets.push(copy);
@@ -518,7 +542,6 @@ document.getElementById("exportLayout").addEventListener("click", () => {
   const roomHeight = parseFloat(document.getElementById("roomHeight").value);
   const gridSizeVal = parseFloat(document.getElementById("gridSize").value);
 
-  // Title for file contents and filename
   const titleVal = (document.getElementById("titleInput").value || "Arcade Layout").trim();
   const safeTitle = titleVal.replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").substring(0, 120);
   const filename = (safeTitle.length ? safeTitle : "Arcade Layout") + "_Layout.json";
@@ -564,7 +587,6 @@ importInput.addEventListener("change", event => {
     try {
       const data = JSON.parse(e.target.result);
 
-      // restore the title if present
       const importedTitle = (data && (data.title || (data.meta && data.meta.title))) || null;
       if (importedTitle && typeof importedTitle === "string") {
         titleInput.value = importedTitle;
@@ -637,7 +659,7 @@ if (exportCabinetBtn) {
     const height = parseFloat(selectedCabinet.dataset.height) || 0;
     const color = selectedCabinet.dataset.color || "#ffffff";
 
-    const payload = { name, width, height, color }; // no rotation, as requested
+    const payload = { name, width, height, color }; // no rotation
 
     const safeName = name.replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, " ").trim().substring(0, 120) || "Cabinet";
     const filename = `${safeName}_Cabinet.json`;
@@ -679,38 +701,9 @@ if (importCabinetBtn && importCabinetFile) {
         newCab.style.height = (heightM * pixelsPerMeter) + "px";
         newCab.style.background = color;
         newCab.style.transformOrigin = "center center";
+        newCab.style.transform = "rotate(0deg)";
 
-        // Find first non-overlapping position scanning grid (already edge-aligned)
-        const gridPx = gridSize * pixelsPerMeter;
-        let placed = false;
-        for (let y = 0; y <= room.clientHeight - newCab.offsetHeight + 1 && !placed; y += gridPx) {
-          for (let x = 0; x <= room.clientWidth - newCab.offsetWidth + 1 && !placed; x += gridPx) {
-            // Temporarily attach to compute offsets
-            newCab.style.left = x + "px";
-            newCab.style.top = y + "px";
-            room.appendChild(newCab);
-            const collision = collidesAt(x, y, newCab);
-            room.removeChild(newCab);
-            if (!collision) {
-              newCab.style.left = x + "px";
-              newCab.style.top = y + "px";
-              placed = true;
-            }
-          }
-        }
-        if (!placed) {
-          // fallback: place at (0,0) clamped
-          newCab.style.left = "0px";
-          newCab.style.top = "0px";
-        }
-
-        // Name label
-        const nameEl = document.createElement("div");
-        nameEl.classList.add("cabinet-name");
-        nameEl.textContent = name;
-        nameEl.style.transform = "rotate(0deg)";
-        newCab.appendChild(nameEl);
-
+        // Set dataset BEFORE placement so rotated hitbox routines read correct size
         newCab.dataset.name = name;
         newCab.dataset.width = widthM;
         newCab.dataset.height = heightM;
@@ -718,6 +711,31 @@ if (importCabinetBtn && importCabinetFile) {
         newCab.dataset.rotation = 0;
         newCab.dataset.locked = "false";
         newCab.classList.toggle("locked", false);
+
+        // Find first non-overlapping position scanning grid
+        const gridPx = gridSize * pixelsPerMeter;
+        let placed = false;
+        for (let y = 0; y <= room.clientHeight - newCab.offsetHeight + 1 && !placed; y += gridPx) {
+          for (let x = 0; x <= room.clientWidth - newCab.offsetWidth + 1 && !placed; x += gridPx) {
+            const clamped = clampToRoomRotated(newCab, x, y);
+            if (!collidesAt(clamped.x, clamped.y, newCab)) {
+              newCab.style.left = clamped.x + "px";
+              newCab.style.top = clamped.y + "px";
+              placed = true;
+            }
+          }
+        }
+        if (!placed) {
+          const clamped = clampToRoomRotated(newCab, 0, 0);
+          newCab.style.left = clamped.x + "px";
+          newCab.style.top = clamped.y + "px";
+        }
+
+        const nameEl = document.createElement("div");
+        nameEl.classList.add("cabinet-name");
+        nameEl.textContent = name;
+        nameEl.style.transform = "rotate(0deg)";
+        newCab.appendChild(nameEl);
 
         room.appendChild(newCab);
         cabinets.push(newCab);
@@ -747,6 +765,7 @@ const savedRoomsList = document.getElementById("savedRoomsList");
 
 // Load saved rooms from localStorage
 function loadSavedRoomsList() {
+  if (!savedRoomsList) return;
   savedRoomsList.innerHTML = "";
   const saved = JSON.parse(localStorage.getItem("savedRooms") || "{}");
   const names = Object.keys(saved);
@@ -788,46 +807,48 @@ function loadSavedRoomsList() {
 }
 
 // Save current layout locally
-saveRoomBtn.addEventListener("click", () => {
-  const titleVal = (document.getElementById("titleInput").value || "Untitled Room").trim();
-  if (!titleVal) {
-    alert("Please enter a valid room name before saving.");
-    return;
-  }
+if (saveRoomBtn) {
+  saveRoomBtn.addEventListener("click", () => {
+    const titleVal = (document.getElementById("titleInput").value || "Untitled Room").trim();
+    if (!titleVal) {
+      alert("Please enter a valid room name before saving.");
+      return;
+    }
 
-  const saved = JSON.parse(localStorage.getItem("savedRooms") || "{}");
+    const saved = JSON.parse(localStorage.getItem("savedRooms") || "{}");
 
-  // ✅ Prevent overwriting existing room
-  if (saved[titleVal]) {
-    alert(`A saved room named "${titleVal}" already exists.\nPlease use a different name.`);
-    return;
-  }
+    // Prevent overwriting existing room
+    if (saved[titleVal]) {
+      alert(`A saved room named "${titleVal}" already exists.\nPlease use a different name.`);
+      return;
+    }
 
-  const layout = {
-    title: titleVal,
-    room: {
-      width: parseFloat(document.getElementById("roomWidth").value),
-      height: parseFloat(document.getElementById("roomHeight").value),
-      gridSize: parseFloat(document.getElementById("gridSize").value)
-    },
-    cabinets: cabinets.map(cab => ({
-      name: cab.dataset.name,
-      width: parseFloat(cab.dataset.width),
-      height: parseFloat(cab.dataset.height),
-      color: cab.dataset.color,
-      x: parseFloat(cab.style.left),
-      y: parseFloat(cab.style.top),
-      rotation: parseFloat(cab.dataset.rotation) || 0,
-      locked: cab.dataset.locked === "true"
-    }))
-  };
+    const layout = {
+      title: titleVal,
+      room: {
+        width: parseFloat(document.getElementById("roomWidth").value),
+        height: parseFloat(document.getElementById("roomHeight").value),
+        gridSize: parseFloat(document.getElementById("gridSize").value)
+      },
+      cabinets: cabinets.map(cab => ({
+        name: cab.dataset.name,
+        width: parseFloat(cab.dataset.width),
+        height: parseFloat(cab.dataset.height),
+        color: cab.dataset.color,
+        x: parseFloat(cab.style.left),
+        y: parseFloat(cab.style.top),
+        rotation: parseFloat(cab.dataset.rotation) || 0,
+        locked: cab.dataset.locked === "true"
+      }))
+    };
 
-  saved[titleVal] = layout;
-  localStorage.setItem("savedRooms", JSON.stringify(saved));
+    saved[titleVal] = layout;
+    localStorage.setItem("savedRooms", JSON.stringify(saved));
 
-  loadSavedRoomsList();
-  alert(`Room "${titleVal}" saved locally!`);
-});
+    loadSavedRoomsList();
+    alert(`Room "${titleVal}" saved locally!`);
+  });
+}
 
 // Load saved room
 function loadSavedRoom(name) {
@@ -888,3 +909,344 @@ function deleteSavedRoom(name) {
 
 // Initialize on startup
 loadSavedRoomsList();
+
+// ---------- LOCAL SAVED CABINETS ----------
+const saveCabinetBtn = document.getElementById("saveCabinetBtn");
+const savedCabinetsList = document.getElementById("savedCabinetsList");
+
+// Load saved cabinets from localStorage
+function loadSavedCabinetsList() {
+  if (!savedCabinetsList) return;
+  savedCabinetsList.innerHTML = "";
+  const saved = JSON.parse(localStorage.getItem("savedCabinets") || "{}");
+  const names = Object.keys(saved);
+
+  if (names.length === 0) {
+    savedCabinetsList.innerHTML = "<p style='font-size:0.7rem; color:#aaa;'>No saved cabinets yet.</p>";
+    return;
+  }
+
+  names.forEach(name => {
+    const entry = document.createElement("div");
+    entry.classList.add("saved-cabinet-entry");
+
+    const label = document.createElement("span");
+    label.textContent = name;
+    entry.appendChild(label);
+
+    const controls = document.createElement("div");
+
+    const loadBtn = document.createElement("button");
+    loadBtn.textContent = "Load";
+    loadBtn.classList.add("load-cabinet-btn");
+    loadBtn.addEventListener("click", () => loadSavedCabinet(name));
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.classList.add("delete-cabinet-btn");
+    delBtn.addEventListener("click", () => {
+      if (confirm(`Delete saved cabinet "${name}"?`)) {
+        deleteSavedCabinet(name);
+      }
+    });
+
+    controls.appendChild(loadBtn);
+    controls.appendChild(delBtn);
+    entry.appendChild(controls);
+
+    savedCabinetsList.appendChild(entry);
+  });
+}
+
+// Save current selected cabinet
+if (saveCabinetBtn) {
+  saveCabinetBtn.addEventListener("click", () => {
+    if (!selectedCabinet) {
+      alert("Select a cabinet first to save.");
+      return;
+    }
+
+    const name = selectedCabinet.dataset.name.trim();
+    if (!name) {
+      alert("Cabinet must have a valid name.");
+      return;
+    }
+
+    const saved = JSON.parse(localStorage.getItem("savedCabinets") || "{}");
+
+    if (saved[name]) {
+      alert(`A saved cabinet named "${name}" already exists.\nPlease use a different name.`);
+      return;
+    }
+
+    saved[name] = {
+      name,
+      width: parseFloat(selectedCabinet.dataset.width),
+      height: parseFloat(selectedCabinet.dataset.height),
+      color: selectedCabinet.dataset.color,
+      rotation: parseFloat(selectedCabinet.dataset.rotation) || 0
+    };
+
+    localStorage.setItem("savedCabinets", JSON.stringify(saved));
+    loadSavedCabinetsList();
+    alert(`Cabinet "${name}" saved successfully!`);
+  });
+}
+
+// Load saved cabinet (spawn in room)
+function loadSavedCabinet(name) {
+  const saved = JSON.parse(localStorage.getItem("savedCabinets") || "{}");
+  const data = saved[name];
+  if (!data) return;
+
+  const newCab = document.createElement("div");
+  newCab.classList.add("cabinet");
+  newCab.style.width = (data.width * pixelsPerMeter) + "px";
+  newCab.style.height = (data.height * pixelsPerMeter) + "px";
+  newCab.style.background = data.color;
+  newCab.style.transformOrigin = "center center";
+  newCab.style.transform = "rotate(" + data.rotation + "deg)";
+  newCab.dataset.name = data.name;
+  newCab.dataset.width = data.width;
+  newCab.dataset.height = data.height;
+  newCab.dataset.color = data.color;
+  newCab.dataset.rotation = data.rotation;
+  newCab.dataset.locked = "false";
+
+  const nameEl = document.createElement("div");
+  nameEl.classList.add("cabinet-name");
+  nameEl.textContent = data.name;
+  nameEl.style.transform = "rotate(" + (-data.rotation) + "deg)";
+  newCab.appendChild(nameEl);
+
+  // Find first non-overlapping position scanning grid
+  const gridPx = gridSize * pixelsPerMeter;
+  let placed = false;
+  for (let y = 0; y <= room.clientHeight - newCab.offsetHeight + 1 && !placed; y += gridPx) {
+    for (let x = 0; x <= room.clientWidth - newCab.offsetWidth + 1 && !placed; x += gridPx) {
+      const clamped = clampToRoomRotated(newCab, x, y);
+      if (!collidesAt(clamped.x, clamped.y, newCab)) {
+        newCab.style.left = clamped.x + "px";
+        newCab.style.top = clamped.y + "px";
+        placed = true;
+      }
+    }
+  }
+  if (!placed) {
+    const clamped = clampToRoomRotated(newCab, 0, 0);
+    newCab.style.left = clamped.x + "px";
+    newCab.style.top = clamped.y + "px";
+  }
+
+  room.appendChild(newCab);
+  cabinets.push(newCab);
+  enableDragging(newCab);
+  newCab.addEventListener("click", (e) => selectCabinet(e, newCab));
+
+  if (selectedCabinet) selectedCabinet.classList.remove("selected");
+  selectedCabinet = newCab;
+  newCab.classList.add("selected");
+  updateSelectedUIFromCabinet(newCab);
+
+  alert(`Loaded saved cabinet: "${name}"`);
+}
+
+// Delete saved cabinet
+function deleteSavedCabinet(name) {
+  const saved = JSON.parse(localStorage.getItem("savedCabinets") || "{}");
+  delete saved[name];
+  localStorage.setItem("savedCabinets", JSON.stringify(saved));
+  loadSavedCabinetsList();
+}
+
+// Initialize cabinet saves on startup
+loadSavedCabinetsList();
+
+// ===================== CABINET DETAILS BAR =====================
+
+const bar = document.getElementById("cabinetDetailsBar");
+const barName = document.getElementById("barName");
+const barWidth = document.getElementById("barWidth");
+const barHeight = document.getElementById("barHeight");
+const barRotation = document.getElementById("barRotation");
+const barColor = document.getElementById("barColor");
+const barSnapToggle = document.getElementById("barSnapToggle");
+const barLockToggle = document.getElementById("barLockToggle");
+const barDeselect = document.getElementById("barDeselect");
+const barDuplicate = document.getElementById("barDuplicate");
+const barDelete = document.getElementById("barDelete");
+
+// Refresh UI
+function updateCabinetDetailsBar() {
+  if (!selectedCabinet) {
+    bar.classList.add("disabled");
+    return;
+  }
+
+  bar.classList.remove("disabled");
+  barName.value = selectedCabinet.dataset.name || "";
+  barWidth.value = selectedCabinet.dataset.width || 1;
+  barHeight.value = selectedCabinet.dataset.height || 1;
+  barRotation.value = selectedCabinet.dataset.rotation || 0;
+  barColor.value = selectedCabinet.dataset.color || "#ffffff";
+
+  const isLocked = selectedCabinet.dataset.locked === "true";
+  barLockToggle.textContent = isLocked ? "Locked" : "Unlocked";
+  barLockToggle.classList.toggle("on", isLocked);
+  barSnapToggle.textContent = `Snapping: ${snapEnabled ? "ON" : "OFF"}`;
+}
+
+// --- Input bindings ---
+barName.addEventListener("input", () => {
+  if (!selectedCabinet) return;
+  selectedCabinet.dataset.name = barName.value;
+  const nameEl = selectedCabinet.querySelector(".cabinet-name");
+  if (nameEl) nameEl.textContent = barName.value;
+});
+
+barWidth.addEventListener("input", () => {
+  if (!selectedCabinet) return;
+  const w = parseFloat(barWidth.value) || 1;
+  selectedCabinet.dataset.width = w;
+  selectedCabinet.style.width = w * pixelsPerMeter + "px";
+});
+
+barHeight.addEventListener("input", () => {
+  if (!selectedCabinet) return;
+  const h = parseFloat(barHeight.value) || 1;
+  selectedCabinet.dataset.height = h;
+  selectedCabinet.style.height = h * pixelsPerMeter + "px";
+});
+
+barRotation.addEventListener("input", () => {
+  if (!selectedCabinet) return;
+  const r = parseFloat(barRotation.value) || 0;
+  selectedCabinet.dataset.rotation = r;
+  selectedCabinet.style.transform = `rotate(${r}deg)`;
+  const nameEl = selectedCabinet.querySelector(".cabinet-name");
+  if (nameEl) nameEl.style.transform = `rotate(${-r}deg)`;
+});
+
+barColor.addEventListener("input", () => {
+  if (!selectedCabinet) return;
+  selectedCabinet.dataset.color = barColor.value;
+  selectedCabinet.style.background = barColor.value;
+});
+
+// --- Button actions ---
+barSnapToggle.addEventListener("click", () => {
+  snapEnabled = !snapEnabled;
+  updateCabinetDetailsBar();
+});
+
+barLockToggle.addEventListener("click", () => {
+  if (!selectedCabinet) return;
+  const locked = selectedCabinet.dataset.locked === "true";
+  selectedCabinet.dataset.locked = locked ? "false" : "true";
+  selectedCabinet.classList.toggle("locked", !locked);
+  updateCabinetDetailsBar();
+});
+
+barDeselect.addEventListener("click", () => {
+  if (selectedCabinet) selectedCabinet.classList.remove("selected");
+  selectedCabinet = null;
+  updateCabinetDetailsBar();
+});
+
+barDuplicate.addEventListener("click", () => {
+  document.getElementById("duplicateCabinet").click(); // triggers existing logic
+  updateCabinetDetailsBar();
+});
+
+barDelete.addEventListener("click", () => {
+  document.getElementById("deleteCabinet").click(); // triggers existing logic
+  updateCabinetDetailsBar();
+});
+
+// --- Hook into selection ---
+const oldSelectCabinet = selectCabinet;
+selectCabinet = function (e, cab) {
+  oldSelectCabinet.call(this, e, cab);
+  updateCabinetDetailsBar();
+};
+
+// --- Deselect when clicking outside ---
+document.addEventListener("click", (e) => {
+  if (!room.contains(e.target) && !bar.contains(e.target)) {
+    if (selectedCabinet) selectedCabinet.classList.remove("selected");
+    selectedCabinet = null;
+    updateCabinetDetailsBar();
+  }
+});
+
+// Init once
+updateCabinetDetailsBar();
+
+
+// ---------- EXPORT ROOM AS PNG ----------
+const exportPngBtn = document.getElementById("exportPngBtn");
+
+if (exportPngBtn) {
+  exportPngBtn.addEventListener("click", async () => {
+    const roomEl = document.getElementById("room");
+
+    // Disable selection highlights for clean render
+    const prevOutline = roomEl.style.outline;
+    const prevCursor = document.body.style.cursor;
+    document.body.style.cursor = "wait";
+    roomEl.classList.remove("selected");
+
+    // Render to canvas using html2canvas
+    const canvas = await html2canvas(roomEl, {
+      backgroundColor: "#222", // fallback background
+      scale: 2,                // higher quality
+      logging: false
+    });
+
+    // Restore cursor
+    document.body.style.cursor = prevCursor;
+    roomEl.style.outline = prevOutline;
+
+    // Download PNG
+    const link = document.createElement("a");
+    const titleVal = (document.getElementById("titleInput").value || "Arcade Layout").trim();
+    const safeTitle = titleVal.replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, " ");
+    link.download = `${safeTitle}_Layout.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
+
+// ===== DELETE SELECTED CABINET WITH KEYBOARD =====
+document.addEventListener("keydown", (e) => {
+  // Ignore if user is typing in an input, textarea, or contenteditable element
+  const active = document.activeElement;
+  const typing =
+    active &&
+    (active.tagName === "INPUT" ||
+     active.tagName === "TEXTAREA" ||
+     active.isContentEditable);
+
+  if (typing) return; // don't delete if typing
+
+  // If Delete key pressed and a cabinet is selected
+  if (e.key === "Delete" && selectedCabinet) {
+    e.preventDefault();
+    // Perform same logic as the delete button
+    cabinets = cabinets.filter(c => c !== selectedCabinet);
+    selectedCabinet.remove();
+    selectedCabinet = null;
+    updateCabinetDetailsBar();
+  }
+});
+
+// ---------- THEME MODE TOGGLE ----------
+const themeModeBtn = document.getElementById("themeModeBtn");
+let darkMode = true; // start in dark mode by default
+
+themeModeBtn.addEventListener("click", () => {
+  darkMode = !darkMode;
+  document.body.classList.toggle("dark-mode", darkMode);
+  document.body.classList.toggle("light-mode", !darkMode);
+  themeModeBtn.textContent = darkMode ? "Dark Mode" : "Light Mode";
+});
