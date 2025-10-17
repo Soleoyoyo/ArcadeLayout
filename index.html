@@ -9,14 +9,33 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="dark-mode simple-mode disable-transitions">
   <header>
-    <h1 id="mainTitle">Arcade Layout</h1>
-    <label for="titleInput" id="titleLabel">Change Title:</label>
-    <input type="text" id="titleInput" value="Arcade Layout">
-    <button id="simpleModeBtn">Simple Mode</button>
-    <button id="themeModeBtn">Dark Mode</button>
-  </header>
+  <h1 id="mainTitle">Arcade Layout</h1>
+  <label for="titleInput" id="titleLabel">Change Title:</label>
+  <input type="text" id="titleInput" value="Arcade Layout">
+</header>
+
+<!-- Mode Toggle Buttons (Right Side, variable-based design) -->
+<button class="mode-btn mode-simple" id="simpleModeBtn">Arcade Mode</button>
+<button class="mode-btn mode-theme" id="themeModeBtn">Light Mode</button>
+
+
+  <!-- Reset Room Button -->
+<button id="resetRoomBtn">Reset Room</button>
+
+<button id="helpBtn">Help</button>
+
+<!-- Confirmation Popup -->
+<div id="resetPopup" class="hidden">
+  <div class="popup-content">
+    <p>Any unsaved rooms or cabinets will be lost.</p>
+    <div class="popup-buttons">
+      <button id="cancelResetBtn">Cancel</button>
+      <button id="confirmResetBtn">Reset</button>
+    </div>
+  </div>
+</div>
 
   <div id="container">
     <!-- LEFT SIDEBAR -->
@@ -113,5 +132,55 @@
   </div>
 
   <script src="script.js"></script>
+
+  <!-- Universal Popup -->
+<div id="customPopup" class="hidden">
+  <div class="popup-content">
+    <p id="popupMessage"></p>
+    <div class="popup-buttons">
+      <button id="popupCancel">Cancel</button>
+      <button id="popupConfirm">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOAD ROOM WARNING POPUP -->
+<div id="loadRoomPopup" class="hidden">
+  <div class="popup-content">
+    <p>⚠️ Loading a saved room will overwrite your current layout.<br><br>
+    Continue?</p>
+    <div class="popup-buttons">
+      <button id="cancelLoadRoomBtn">Cancel</button>
+      <button id="confirmLoadRoomBtn">Load Room</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HELP POPUP ===== -->
+<div id="helpPopup" class="hidden popup-overlay">
+  <div class="popup-content">
+    <h2>Help & Tips</h2>
+    <div class="popup-body">
+      <p>Welcome to the <strong>Arcade Layout Planner!</strong></p>
+      <ul>
+        <li> 🕹️ <strong>Add Cabinets</strong> using the cabinet creator on the left - Input the name, dimensions and chosen colour of your cabinet.</li>
+        <li> 🎨 <strong>Edit Cabinet Details</strong> using the bottom panel — Adjust the name, dimensions, rotation and colour.</li>
+        <li> 📏 <strong>Snap to Grid</strong> or align cabinets edge-to-edge — You can toggle snapping anytime.</li>
+        <li> 🔒 <strong>Lock</strong> cabinets in place so you can't accidentally move them - Toggle locking on any cabinet of your choosing.</li>
+        <li> ➕ <strong>Duplicate</strong> any cabinet by clicking the duplicate button.</li>
+        <li> ❌ <strong>Delete</strong> unwanted cabinets by either pressing the delete button or your delete key.</li>
+        <li> 💾 <strong>Save Cabinets</strong> locally to your computer by using the Save Current Cabinet button on the left on any selected cabinet - These will stay saved even if you reset your room.</li>
+        <li> 📤 <strong>Export and Import Cabinets</strong> of your choice by using the menu at the bottom left - You can even share these between others by sending and receiving cabinet files.</li>
+        <li> 🏁 <strong>Change you Room</strong> dimensions by using the top menu on the right - You can alter the width and length of your room as well as the size of the grid. Click update to apply these new measurements to your room.</li>
+        <li> 💾 <strong>Save Rooms</strong> you are working on so you can come back to them later - You can also save multiple rooms and swap between them by loading a room.</li>
+        <li> 📤 <strong>Share Rooms</strong> by exporting and importing rooms - All rooms will be downloaded to your computer. You can also download your room as a png.</li>
+        <li> 👾 <strong>Arcade Mode</strong> livens up your work space with neon colours and flashing lights - just press the Arcade Mode button up the top right. You can always come back to the simpler look.</li>
+        <li> 💡 <strong>Light Mode</strong> can be swapped to at any time - You can always come back to the dark side if the bright lights hurt your eyes.</li>
+    </div>
+    <button id="closeHelpBtn" class="popup-close-btn">Close</button>
+  </div>
+</div>
+
+
 </body>
 </html>

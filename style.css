@@ -13,6 +13,163 @@ body.simple-mode:not(.light-mode) {
     color: #fff;
 }
 
+/* =========================================================
+   THEME MODE BUTTON (Dark / Light Toggle)
+   Stand-alone version using CSS variables
+   ========================================================= */
+
+.mode-theme-btn {
+  --theme-bg: #00ffff;
+  --theme-color: #000;
+  --theme-hover: #66ffff;
+  --theme-border: none;
+
+  position: absolute;
+  top: 90px;           /* below Simple Mode button */
+  right: 25px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: var(--theme-border);
+  background: var(--theme-bg);
+  color: var(--theme-color);
+  cursor: pointer;
+  z-index: 20;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.mode-theme-btn:hover {
+  background: var(--theme-hover);
+  transform: translateY(-1px);
+}
+
+/* ===== Mode Variants ===== */
+
+/* Arcade Dark */
+body:not(.simple-mode).dark-mode .mode-theme-btn {
+  --theme-bg: #00ffff;
+  --theme-color: #000;
+  --theme-hover: #66ffff;
+  --theme-border: none;
+}
+
+/* Arcade Light */
+body:not(.simple-mode).light-mode .mode-theme-btn {
+  --theme-bg: #88ffff;
+  --theme-color: #000;
+  --theme-hover: #55ffff;
+  --theme-border: 2px solid #000;
+}
+
+/* Simple Dark */
+body.simple-mode.dark-mode .mode-theme-btn {
+  --theme-bg: #339999;
+  --theme-color: #fff;
+  --theme-hover: #47baba;
+  --theme-border: 2px solid #777;
+}
+
+/* Simple Light */
+body.simple-mode.light-mode .mode-theme-btn {
+  --theme-bg: #aaffff;
+  --theme-color: #000;
+  --theme-hover: #88ffff;
+  --theme-border: 2px solid #333;
+}
+
+/* =========================================================
+   MODE TOGGLE BUTTONS (Using CSS Variables)
+   ========================================================= */
+
+.mode-btn {
+  --btn-bg: #ff00ff;
+  --btn-color: #fff;
+  --btn-hover: #ff66ff;
+  --btn-border: none;
+
+  position: absolute;
+  right: 25px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  cursor: pointer;
+  z-index: 20;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.mode-btn:hover {
+  background: var(--btn-hover);
+  transform: translateY(-1px);
+}
+
+/* Specific button placement */
+.mode-simple { top: 25px; }
+.mode-theme { top: 90px; }
+
+/* ============================= */
+/* ===== Mode Color Schemes ===== */
+/* ============================= */
+
+/* ----- Arcade Mode (Dark default) ----- */
+body:not(.simple-mode).dark-mode .mode-simple {
+  --btn-bg: #ff00ff;
+  --btn-hover: #ff66ff;
+  --btn-color: #fff;
+}
+body:not(.simple-mode).dark-mode .mode-theme {
+  --btn-bg: #00ffff;
+  --btn-hover: #66ffff;
+  --btn-color: #000;
+}
+
+/* ----- Arcade Mode (Light) ----- */
+body:not(.simple-mode).light-mode .mode-simple {
+  --btn-bg: #ff88ff;
+  --btn-hover: #ff66ff;
+  --btn-color: #000;
+  --btn-border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode .mode-theme {
+  --btn-bg: #88ffff;
+  --btn-hover: #55ffff;
+  --btn-color: #000;
+  --btn-border: 2px solid #000;
+}
+
+/* ----- Simple Mode (Dark) ----- */
+body.simple-mode.dark-mode .mode-simple {
+  --btn-bg: #bb33bb;
+  --btn-hover: #d14fd1;
+  --btn-color: #fff;
+  --btn-border: 2px solid #777;
+}
+body.simple-mode.dark-mode .mode-theme {
+  --btn-bg: #339999;
+  --btn-hover: #47baba;
+  --btn-color: #fff;
+  --btn-border: 2px solid #777;
+}
+
+/* ----- Simple Mode (Light) ----- */
+body.simple-mode.light-mode .mode-simple {
+  --btn-bg: #ff99ff;
+  --btn-hover: #ff66ff;
+  --btn-color: #000;
+  --btn-border: 2px solid #333;
+}
+body.simple-mode.light-mode .mode-theme {
+  --btn-bg: #aaffff;
+  --btn-hover: #88ffff;
+  --btn-color: #000;
+  --btn-border: 2px solid #333;
+}
+
+
 /* Prevent white flash when switching modes */
 html, body {
     background-color: #1a1a1a; /* safe dark default */
@@ -58,6 +215,8 @@ header h1 {
                 2px -2px 0 #000,
                -2px -2px 0 #000;
 }
+
+
 
 #titleLabel {
   font-family: 'Press Start 2P', monospace;
@@ -197,23 +356,6 @@ body.simple-mode #room { border: 3px solid #000; background: #fff; }
 body.simple-mode .grid-line { background: #444; }
 body.simple-mode .cabinet { border: 2px solid #000; font-family: Arial, sans-serif; font-size: 0.8rem; color: #000; }
 
-/* Simple Mode Button */
-#simpleModeBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.65rem;
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  background: #ff00ff;
-  color: #fff;
-  z-index: 20;
-  transition: 0.2s all;
-}
-#simpleModeBtn:hover { background: #ff66ff; }
 
 /* Scrollbars */
 #container::-webkit-scrollbar,
@@ -1521,4 +1663,881 @@ body.simple-mode.light-mode #sidebar-right {
     border-color: #333 !important;
     color: #000 !important;
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.15); /* subtle depth */
+}
+
+/* =========================================================
+   RESET ROOM BUTTON + POPUP
+   ========================================================= */
+
+/* Button positioning */
+#resetRoomBtn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    z-index: 20;
+    transition: 0.2s all;
+}
+
+/* Arcade Mode - Dark */
+body:not(.simple-mode).dark-mode #resetRoomBtn {
+    background: #ff4444;
+    color: #fff;
+}
+body:not(.simple-mode).dark-mode #resetRoomBtn:hover {
+    background: #e03636;
+}
+
+/* Arcade Mode - Light */
+body:not(.simple-mode).light-mode #resetRoomBtn {
+    background: #ff8888;
+    color: #000;
+    border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode #resetRoomBtn:hover {
+    background: #ff6666;
+}
+
+/* Simple Mode - Dark */
+body.simple-mode.dark-mode #resetRoomBtn {
+    background: #ff4444;
+    color: #fff;
+    border: 2px solid #777;
+}
+body.simple-mode.dark-mode #resetRoomBtn:hover {
+    background: #e03636;
+}
+
+/* Simple Mode - Light */
+body.simple-mode.light-mode #resetRoomBtn {
+    background: #ff6666;
+    color: #000;
+    border: 2px solid #333;
+}
+body.simple-mode.light-mode #resetRoomBtn:hover {
+    background: #ff4444;
+}
+
+/* ===== Popup Overlay ===== */
+#resetPopup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.3s ease;
+}
+#resetPopup.hidden {
+    display: none;
+}
+
+/* Popup box */
+#resetPopup .popup-content {
+    background: #222;
+    border: 3px solid #ff00ff;
+    border-radius: 12px;
+    padding: 24px 32px;
+    text-align: center;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+}
+
+/* Buttons inside popup */
+.popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.popup-buttons button {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* Cancel + Reset styles */
+#cancelResetBtn {
+    background: #555;
+    color: #fff;
+}
+#cancelResetBtn:hover {
+    background: #777;
+}
+
+#confirmResetBtn {
+    background: #ff4444;
+    color: #fff;
+}
+#confirmResetBtn:hover {
+    background: #e03636;
+}
+
+/* Light mode popup colours */
+body.light-mode #resetPopup .popup-content {
+    background: #fff;
+    color: #000;
+    border: 3px solid #000;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode #cancelResetBtn {
+    background: #ccc;
+    color: #000;
+    border: 2px solid #333;
+}
+body.light-mode #cancelResetBtn:hover {
+    background: #bbb;
+}
+
+body.light-mode #confirmResetBtn {
+    background: #ff6666;
+    color: #000;
+    border: 2px solid #000;
+}
+body.light-mode #confirmResetBtn:hover {
+    background: #ff4444;
+}
+
+/* =========================================================
+   RESET ROOM BUTTON (LARGER + PADDED)
+   ========================================================= */
+
+#resetRoomBtn {
+    position: absolute;
+    top: 25px;     /* add more top padding */
+    left: 25px;    /* add more left padding */
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1rem;               /* twice as big */
+    padding: 12px 24px;            /* larger button body */
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    z-index: 20;
+    transition: 0.2s all;
+}
+
+/* Arcade Mode - Dark */
+body:not(.simple-mode).dark-mode #resetRoomBtn {
+    background: #ff4444;
+    color: #fff;
+}
+body:not(.simple-mode).dark-mode #resetRoomBtn:hover {
+    background: #e03636;
+}
+
+/* Arcade Mode - Light */
+body:not(.simple-mode).light-mode #resetRoomBtn {
+    background: #ff8888;
+    color: #000;
+    border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode #resetRoomBtn:hover {
+    background: #ff6666;
+}
+
+/* Simple Mode - Dark */
+body.simple-mode.dark-mode #resetRoomBtn {
+    background: #ff4444;
+    color: #fff;
+    border: 2px solid #777;
+}
+body.simple-mode.dark-mode #resetRoomBtn:hover {
+    background: #e03636;
+}
+
+/* Simple Mode - Light */
+body.simple-mode.light-mode #resetRoomBtn {
+    background: #ff6666;
+    color: #000;
+    border: 2px solid #333;
+}
+body.simple-mode.light-mode #resetRoomBtn:hover {
+    background: #ff4444;
+}
+
+#customPopup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+#customPopup.hidden { display: none; }
+
+#customPopup .popup-content {
+  background: #222;
+  border: 3px solid #ff00ff;
+  border-radius: 12px;
+  padding: 24px 32px;
+  text-align: center;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  box-shadow: 0 0 20px rgba(255,0,255,0.4);
+}
+body.light-mode #customPopup .popup-content {
+  background: #fff;
+  border: 3px solid #000;
+  color: #000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+/* ===== HELP POPUP ===== */
+#helpPopup.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: 0.3s ease;
+}
+
+#helpPopup.hidden {
+  display: none;
+}
+
+#helpPopup .popup-content {
+  background: #222;
+  color: #fff;
+  border: 3px solid #00ffff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  width: 480px;
+  max-width: 90%;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+#helpPopup h2 {
+  text-align: center;
+  color: #00ffff;
+  margin-bottom: 15px;
+}
+
+#helpPopup .popup-body ul {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+#helpPopup .popup-body li {
+  margin-bottom: 8px;
+}
+
+#helpPopup .popup-close-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 16px;
+  background: #ff00ff;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#helpPopup .popup-close-btn:hover {
+  background: #ff66ff;
+}
+
+/* ===== SIMPLE MODE DARK THEME ===== */
+body.simple-mode.dark-mode {
+  background: #121212;
+  color: #f0f0f0;
+}
+
+/* Panels */
+body.simple-mode.dark-mode #leftPanel,
+body.simple-mode.dark-mode #rightPanel {
+  background: #1e1e1e;
+  color: #f0f0f0;
+  border-color: #333;
+}
+
+/* Headings & labels */
+body.simple-mode.dark-mode h2,
+body.simple-mode.dark-mode h3,
+body.simple-mode.dark-mode #titleLabel {
+  color: #ffffff;
+}
+
+/* Inputs & buttons */
+body.simple-mode.dark-mode input,
+body.simple-mode.dark-mode select,
+body.simple-mode.dark-mode button {
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+body.simple-mode.dark-mode input:focus,
+body.simple-mode.dark-mode select:focus,
+body.simple-mode.dark-mode button:hover {
+  background: #2e2e2e;
+  border-color: #666;
+}
+
+/* Saved lists */
+body.simple-mode.dark-mode #savedRoomsList,
+body.simple-mode.dark-mode #savedCabinetsList {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #eee;
+}
+
+/* Cabinet details bar */
+body.simple-mode.dark-mode #cabinetDetailsBar {
+  background: #181818;
+  color: #fff;
+  border-top: 1px solid #333;
+}
+
+/* Room background & grid */
+body.simple-mode.dark-mode #room {
+  background: #101010;
+}
+body.simple-mode.dark-mode .grid-line {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#helpBtn {
+  position: absolute;
+  top: 80px; /* slightly below Reset Room */
+  left: 25px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  transition: 0.2s all;
+}
+
+/* Arcade Mode - Dark */
+body:not(.simple-mode).dark-mode #helpBtn {
+  background: #ffaa00;
+  color: #000;
+}
+body:not(.simple-mode).dark-mode #helpBtn:hover {
+  background: #ffcc33;
+}
+
+/* Arcade Mode - Light */
+body:not(.simple-mode).light-mode #helpBtn {
+  background: #ffd633;
+  color: #000;
+  border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode #helpBtn:hover {
+  background: #ffcc00;
+}
+
+/* Simple Mode - Dark */
+body.simple-mode.dark-mode #helpBtn {
+  background: #cc9900;
+  color: #fff;
+  border: 2px solid #777;
+}
+body.simple-mode.dark-mode #helpBtn:hover {
+  background: #d4a017;
+}
+
+/* Simple Mode - Light */
+body.simple-mode.light-mode #helpBtn {
+  background: #ffcc33;
+  color: #000;
+  border: 2px solid #333;
+}
+body.simple-mode.light-mode #helpBtn:hover {
+  background: #ffbb00;
+}
+
+
+/* ================================
+   SIMPLE MODE THEME (from scratch)
+   Works with:
+     <body class="simple-mode light-mode">  or
+     <body class="simple-mode dark-mode">
+   ================================ */
+
+/* Base mapping for Simple Mode elements (use variables) */
+body.simple-mode {
+  /* Fallbacks (in case neither light-mode nor dark-mode is present) */
+  --sm-bg: #f8f8f8;
+  --sm-text: #222;
+
+  --sm-panel-bg: #eaeaea;
+  --sm-panel-text: #222;
+  --sm-panel-border: #ccc;
+
+  --sm-heading: #000;
+  --sm-label: #000;
+
+  --sm-input-bg: #fff;
+  --sm-input-text: #000;
+  --sm-input-border: #bbb;
+  --sm-input-hover-bg: #f0f0f0;
+  --sm-input-hover-border: #888;
+
+  --sm-list-bg: #fafafa;
+  --sm-list-text: #222;
+  --sm-list-border: #ddd;
+
+  --sm-bar-bg: #f2f2f2;
+  --sm-bar-text: #000;
+  --sm-bar-border: #ccc;
+
+  --sm-room-bg: #fff;
+  --sm-grid-line: rgba(0, 0, 0, 0.05);
+
+  background: var(--sm-bg);
+  color: var(--sm-text);
+}
+
+/* ===== Simple Mode: DARK ===== */
+body.simple-mode.dark-mode {
+  --sm-bg: #121212;
+  --sm-text: #f0f0f0;
+
+  --sm-panel-bg: #1e1e1e;
+  --sm-panel-text: #f0f0f0;
+  --sm-panel-border: #333;
+
+  --sm-heading: #ffffff;
+  --sm-label: #ffffff;
+
+  --sm-input-bg: #222;
+  --sm-input-text: #fff;
+  --sm-input-border: #444;
+  --sm-input-hover-bg: #2e2e2e;
+  --sm-input-hover-border: #666;
+
+  --sm-list-bg: #1a1a1a;
+  --sm-list-text: #eee;
+  --sm-list-border: #333;
+
+  --sm-bar-bg: #181818;
+  --sm-bar-text: #fff;
+  --sm-bar-border: #333;
+
+  --sm-room-bg: #101010;
+  --sm-grid-line: rgba(255, 255, 255, 0.05);
+}
+
+/* ===== Simple Mode: LIGHT ===== */
+body.simple-mode.light-mode {
+  --sm-bg: #f8f8f8;
+  --sm-text: #222;
+
+  --sm-panel-bg: #eaeaea;
+  --sm-panel-text: #222;
+  --sm-panel-border: #ccc;
+
+  --sm-heading: #000;
+  --sm-label: #000;
+
+  --sm-input-bg: #fff;
+  --sm-input-text: #000;
+  --sm-input-border: #bbb;
+  --sm-input-hover-bg: #f0f0f0;
+  --sm-input-hover-border: #888;
+
+  --sm-list-bg: #fafafa;
+  --sm-list-text: #222;
+  --sm-list-border: #ddd;
+
+  --sm-bar-bg: #f2f2f2;
+  --sm-bar-text: #000;
+  --sm-bar-border: #ccc;
+
+  --sm-room-bg: #fff;
+  --sm-grid-line: rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Apply variables to actual UI parts (Simple Mode only) ===== */
+
+/* Side panels */
+body.simple-mode #sidebar-left,
+body.simple-mode #sidebar-right {
+  background: var(--sm-panel-bg);
+  color: var(--sm-panel-text);
+  border-color: var(--sm-panel-border);
+}
+
+/* Headings & the title label */
+body.simple-mode h2,
+body.simple-mode h3,
+body.simple-mode #titleLabel {
+  color: var(--sm-heading);
+}
+
+/* Inputs, selects, buttons (generic) */
+body.simple-mode input,
+body.simple-mode select,
+body.simple-mode button,
+body.simple-mode textarea {
+  background: var(--sm-input-bg);
+  color: var(--sm-input-text);
+  border: 1px solid var(--sm-input-border);
+}
+
+body.simple-mode input:focus,
+body.simple-mode select:focus,
+body.simple-mode textarea:focus,
+body.simple-mode button:hover {
+  background: var(--sm-input-hover-bg);
+  border-color: var(--sm-input-hover-border);
+}
+
+/* Saved lists */
+body.simple-mode #savedRoomsList,
+body.simple-mode #savedCabinetsList {
+  background: var(--sm-list-bg);
+  border: 1px solid var(--sm-list-border);
+  color: var(--sm-list-text);
+}
+
+/* Bottom cabinet details bar */
+body.simple-mode #cabinetDetailsBar {
+  background: var(--sm-bar-bg);
+  color: var(--sm-bar-text);
+  border-top: 1px solid var(--sm-bar-border);
+}
+
+/* Room & grid */
+body.simple-mode #room {
+  background: var(--sm-room-bg);
+}
+body.simple-mode .grid-line {
+  background: var(--sm-grid-line);
+}
+
+/* =========================================================
+   SIMPLE MODE - DARK THEME INPUT & BOTTOM PANEL ENHANCEMENTS
+   ========================================================= */
+
+/* Sidebar inputs: clearer background and borders */
+body.simple-mode.dark-mode #sidebar-left input[type="text"],
+body.simple-mode.dark-mode #sidebar-left input[type="number"],
+body.simple-mode.dark-mode #sidebar-left input[type="color"],
+body.simple-mode.dark-mode #sidebar-right input[type="text"],
+body.simple-mode.dark-mode #sidebar-right input[type="number"],
+body.simple-mode.dark-mode #sidebar-right input[type="color"],
+body.simple-mode.dark-mode #sidebar-left select,
+body.simple-mode.dark-mode #sidebar-right select,
+body.simple-mode.dark-mode #sidebar-left textarea,
+body.simple-mode.dark-mode #sidebar-right textarea {
+  background: #2d2d2d;       /* more contrast than panel bg */
+  color: #fff;
+  border: 2px solid #666;    /* medium grey border for separation */
+  border-radius: 4px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+body.simple-mode.dark-mode #sidebar-left input:focus,
+body.simple-mode.dark-mode #sidebar-right input:focus,
+body.simple-mode.dark-mode #sidebar-left select:focus,
+body.simple-mode.dark-mode #sidebar-right select:focus,
+body.simple-mode.dark-mode #sidebar-left textarea:focus,
+body.simple-mode.dark-mode #sidebar-right textarea:focus {
+  background: #3a3a3a;
+  border-color: #888;
+  outline: none;
+}
+
+/* Colour pickers (remove neon, match neutral style) */
+body.simple-mode.dark-mode #sidebar-left input[type="color"],
+body.simple-mode.dark-mode #sidebar-right input[type="color"] {
+  background: #1a1a1a;
+  border: 2px solid #666;
+  height: 42px;
+  padding: 0;
+  cursor: pointer;
+}
+
+body.simple-mode.dark-mode #sidebar-left input[type="color"]:focus,
+body.simple-mode.dark-mode #sidebar-right input[type="color"]:focus {
+  border-color: #888;
+  box-shadow: 0 0 6px #333;
+}
+
+/* Bottom Cabinet Details Bar text fix */
+body.simple-mode.dark-mode #cabinetDetailsBar,
+body.simple-mode.dark-mode #cabinetDetailsBar label,
+body.simple-mode.dark-mode #cabinetDetailsBar input,
+body.simple-mode.dark-mode #cabinetDetailsBar button {
+  color: #fff !important;     /* force white text */
+}
+
+body.simple-mode.dark-mode #cabinetDetailsBar {
+  background: #181818 !important;
+  border: 2px solid #555 !important;
+}
+
+
+/* =========================================================
+   LOAD ROOM WARNING POPUP (Same style as Reset Popup)
+   ========================================================= */
+#loadRoomPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: opacity 0.3s ease;
+}
+#loadRoomPopup.hidden {
+  display: none;
+}
+
+#loadRoomPopup .popup-content {
+  background: #222;
+  border: 3px solid #ff00ff;
+  border-radius: 12px;
+  padding: 24px 32px;
+  text-align: center;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+}
+
+#loadRoomPopup .popup-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+#cancelLoadRoomBtn {
+  background: #555;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#cancelLoadRoomBtn:hover { background: #777; }
+
+#confirmLoadRoomBtn {
+  background: #ff00ff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#confirmLoadRoomBtn:hover { background: #ff66ff; }
+
+/* Light mode */
+body.light-mode #loadRoomPopup .popup-content {
+  background: #fff;
+  color: #000;
+  border: 3px solid #000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+body.light-mode #cancelLoadRoomBtn {
+  background: #ccc;
+  color: #000;
+  border: 2px solid #333;
+}
+body.light-mode #cancelLoadRoomBtn:hover { background: #bbb; }
+body.light-mode #confirmLoadRoomBtn {
+  background: #ff66ff;
+  color: #000;
+  border: 2px solid #000;
+}
+body.light-mode #confirmLoadRoomBtn:hover { background: #ff33ff; }
+
+/* =========================================================
+   FINAL OVERRIDE: Right-side Mode Buttons (size & position)
+   Keeps your existing color themes; only locks layout/scale.
+   ========================================================= */
+
+#simpleModeBtn {
+  position: absolute !important;
+  top: 25px !important;       /* aligns with Reset/Help spacing */
+  right: 25px !important;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 1rem !important; /* same visual scale as Reset/Help */
+  padding: 12px 24px !important;
+  border-radius: 6px !important;
+  z-index: 21 !important;
+}
+
+#themeModeBtn {
+  position: absolute !important;
+  top: 85px !important;       /* sits directly under Simple/Arcade */
+  right: 25px !important;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 1rem !important; /* same visual scale as Reset/Help */
+  padding: 12px 24px !important;
+  border-radius: 6px !important;
+  z-index: 21 !important;
+}
+
+/* Optional: consistent hover lift (keeps your colors) */
+#simpleModeBtn:hover,
+#themeModeBtn:hover {
+  transform: translateY(-1px);
+  transition: transform 0.12s ease;
+}
+
+/* =========================================================
+   MODE TOGGLE BUTTONS — MATCH RESET BUTTON + FONT SWAP
+   ========================================================= */
+
+/* Base size & positioning (same as resetRoomBtn) */
+#simpleModeBtn,
+#themeModeBtn {
+  position: absolute;
+  right: 25px;
+  font-size: 0.65rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  transition: none;
+}
+
+/* Placement */
+#simpleModeBtn { top: 10px; }
+#themeModeBtn { top: 60px; }
+
+/* ===== ARCADE MODE (Normal) ===== */
+body:not(.simple-mode) #simpleModeBtn,
+body:not(.simple-mode) #themeModeBtn {
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Arcade - Dark */
+body:not(.simple-mode).dark-mode #simpleModeBtn {
+  background: #ff00ff;
+  color: #fff;
+}
+body:not(.simple-mode).dark-mode #simpleModeBtn:hover {
+  background: #e600e6;
+}
+body:not(.simple-mode).dark-mode #themeModeBtn {
+  background: #00ffff;
+  color: #000;
+}
+body:not(.simple-mode).dark-mode #themeModeBtn:hover {
+  background: #00cccc;
+}
+
+/* Arcade - Light */
+body:not(.simple-mode).light-mode #simpleModeBtn {
+  background: #ff88ff;
+  color: #000;
+  border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode #simpleModeBtn:hover {
+  background: #ff66ff;
+}
+body:not(.simple-mode).light-mode #themeModeBtn {
+  background: #88ffff;
+  color: #000;
+  border: 2px solid #000;
+}
+body:not(.simple-mode).light-mode #themeModeBtn:hover {
+  background: #66ffff;
+}
+
+/* ===== SIMPLE MODE ===== */
+body.simple-mode #simpleModeBtn,
+body.simple-mode #themeModeBtn {
+  font-family: system-ui, Arial, sans-serif; /* simpler font */
+}
+
+/* Simple Mode - Dark */
+body.simple-mode.dark-mode #simpleModeBtn {
+  background: #bb33bb;
+  color: #fff;
+  border: 2px solid #777;
+}
+body.simple-mode.dark-mode #simpleModeBtn:hover {
+  background: #d14fd1;
+}
+body.simple-mode.dark-mode #themeModeBtn {
+  background: #339999;
+  color: #fff;
+  border: 2px solid #777;
+}
+body.simple-mode.dark-mode #themeModeBtn:hover {
+  background: #47baba;
+}
+
+/* Simple Mode - Light */
+body.simple-mode.light-mode #simpleModeBtn {
+  background: #ff99ff;
+  color: #000;
+  border: 2px solid #333;
+}
+body.simple-mode.light-mode #simpleModeBtn:hover {
+  background: #ff66ff;
+}
+body.simple-mode.light-mode #themeModeBtn {
+  background: #aaffff;
+  color: #000;
+  border: 2px solid #333;
+}
+body.simple-mode.light-mode #themeModeBtn:hover {
+  background: #88ffff;
+}
+
+/* =========================================================
+   FINAL FONT FIX — FORCE FONT SWAP BETWEEN MODES
+   ========================================================= */
+
+/* Force Arcade font when NOT in simple mode */
+body:not(.simple-mode).dark-mode #simpleModeBtn,
+body:not(.simple-mode).light-mode #simpleModeBtn,
+body:not(.simple-mode).dark-mode #themeModeBtn,
+body:not(.simple-mode).light-mode #themeModeBtn {
+  font-family: 'Press Start 2P', monospace !important;
+}
+
+/* Force Simple font when in simple mode */
+body.simple-mode.dark-mode #simpleModeBtn,
+body.simple-mode.light-mode #simpleModeBtn,
+body.simple-mode.dark-mode #themeModeBtn,
+body.simple-mode.light-mode #themeModeBtn {
+  font-family: system-ui, Arial, sans-serif !important;
 }
