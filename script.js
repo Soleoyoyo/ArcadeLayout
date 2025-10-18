@@ -1393,7 +1393,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const zoomInBtn = document.getElementById("zoomInBtn");
 const zoomOutBtn = document.getElementById("zoomOutBtn");
 const roomContainer = document.getElementById("roomContainer");
-let roomZoom = 1;
+let roomZoom = 0.67;
 
 function applyRoomZoom() {
   room.style.transform = `scale(${roomZoom})`;
@@ -1425,5 +1425,13 @@ if (zoomInBtn && zoomOutBtn) {
 }
 
 applyRoomZoom();
+
+function setHeaderHeightVar() {
+  const h = document.querySelector('header')?.offsetHeight || 120;
+  document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+window.addEventListener('load', setHeaderHeightVar);
+window.addEventListener('resize', setHeaderHeightVar);
+setHeaderHeightVar();
 
 

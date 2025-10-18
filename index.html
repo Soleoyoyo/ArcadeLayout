@@ -11,155 +11,163 @@
 </head>
 <body class="dark-mode simple-mode disable-transitions">
   <header>
-  <h1 id="mainTitle">Arcade Layout</h1>
-  <label for="titleInput" id="titleLabel">Change Title:</label>
-  <input type="text" id="titleInput" value="Arcade Layout">
-</header>
+    <h1 id="mainTitle">Arcade Layout</h1>
+    <label for="titleInput" id="titleLabel">Change Title:</label>
+    <input type="text" id="titleInput" value="Arcade Layout">
+  </header>
 
-<!-- Mode Toggle Buttons (Right Side, variable-based design) -->
-<button class="mode-btn mode-simple" id="simpleModeBtn">Arcade Mode</button>
-<button class="mode-btn mode-theme" id="themeModeBtn">Light Mode</button>
+  <!-- Mode Toggle Buttons -->
+  <button class="mode-btn mode-simple" id="simpleModeBtn">Arcade Mode</button>
+  <button class="mode-btn mode-theme" id="themeModeBtn">Light Mode</button>
 
-  <!-- Reset Room Button -->
-<button id="resetRoomBtn">Reset Room</button>
+  <!-- Reset / Help -->
+  <button id="resetRoomBtn">Reset Room</button>
+  <button id="helpBtn">Help</button>
 
-<button id="helpBtn">Help</button>
-
-<!-- Confirmation Popup -->
-<div id="resetPopup" class="hidden">
-  <div class="popup-content">
-    <p>Any unsaved rooms or cabinets will be lost.</p>
-    <div class="popup-buttons">
-      <button id="cancelResetBtn">Cancel</button>
-      <button id="confirmResetBtn">Reset</button>
+  <!-- Reset Confirmation Popup -->
+  <div id="resetPopup" class="hidden">
+    <div class="popup-content">
+      <p>Any unsaved rooms or cabinets will be lost.</p>
+      <div class="popup-buttons">
+        <button id="cancelResetBtn">Cancel</button>
+        <button id="confirmResetBtn">Reset</button>
+      </div>
     </div>
   </div>
-</div>
 
+  <!-- ================= MAIN CONTAINER ================= -->
   <div id="container">
     <!-- LEFT SIDEBAR -->
     <div id="sidebar-left">
-      <h2>Cabinet Creator</h2>
-      <label>Name: <input type="text" id="cabinetName" value="Cabinet"></label>
-      <label>Width (M): <input type="number" id="cabinetWidth" value="1" min="0.5" step="0.1"></label>
-      <label>Length (M): <input type="number" id="cabinetHeight" value="1" min="0.5" step="0.1"></label>
-      <label>Cabinet Colour: <input type="color" id="cabinetColor" value="#ff00ff"></label>
-      <button id="addCabinet">Add Cabinet</button>
+      <div class="sidebar-inner">
+        <h2>Cabinet Creator</h2>
+        <label>Name: <input type="text" id="cabinetName" value="Cabinet"></label>
+        <label>Width (M): <input type="number" id="cabinetWidth" value="1" min="0.5" step="0.1"></label>
+        <label>Length (M): <input type="number" id="cabinetHeight" value="1" min="0.5" step="0.1"></label>
+        <label>Cabinet Colour: <input type="color" id="cabinetColor" value="#ff00ff"></label>
+        <button id="addCabinet">Add Cabinet</button>
 
-      <hr>
+        <hr>
 
-      <div id="selectedCabinetUI" style="display: none;">
-        <h2>Cabinet Details</h2>
-        <label>Name: <input type="text" id="selectedName"></label>
-        <label>Width (M): <input type="number" id="selectedWidth" min="0.5" step="0.1"></label>
-        <label>Length (M): <input type="number" id="selectedHeight" min="0.5" step="0.1"></label>
-        <label>Rotation (°): <input type="number" id="selectedRotation" min="0" max="359" step="1"></label>
-        <label>Colour: <input type="color" id="selectedColor"></label>
+        <div id="selectedCabinetUI" style="display: none;">
+          <h2>Cabinet Details</h2>
+          <label>Name: <input type="text" id="selectedName"></label>
+          <label>Width (M): <input type="number" id="selectedWidth" min="0.5" step="0.1"></label>
+          <label>Length (M): <input type="number" id="selectedHeight" min="0.5" step="0.1"></label>
+          <label>Rotation (°): <input type="number" id="selectedRotation" min="0" max="359" step="1"></label>
+          <label>Colour: <input type="color" id="selectedColor"></label>
 
-        <div class="toggle-row">
-          <button id="snapToggleBtn" class="toggle-btn">Snapping: ON</button>
-          <button id="lockToggleBtn" class="toggle-btn">Unlocked</button>
+          <div class="toggle-row">
+            <button id="snapToggleBtn" class="toggle-btn">Snapping: ON</button>
+            <button id="lockToggleBtn" class="toggle-btn">Unlocked</button>
+          </div>
+
+          <button id="deselectCabinet">Deselect</button>
+          <button id="duplicateCabinet">Duplicate</button>
+          <button id="deleteCabinet">Delete Cabinet</button>
         </div>
 
-        <button id="deselectCabinet">Deselect</button>
-        <button id="duplicateCabinet">Duplicate</button>
-        <button id="deleteCabinet">Delete Cabinet</button>
+
+
+        <h2>Cabinet Export / Import</h2>
+        <button id="exportCabinetBtn">Export Cabinet</button>
+        <button id="importCabinetBtn">Import Cabinet</button>
+        <input type="file" id="importCabinetFile" accept=".json" style="display:none;">
+
+        <hr>
+
+        <!-- Saved Cabinets -->
+        <h2>Saved Cabinets</h2>
+        <button id="saveCabinetBtn">Save Current Cabinet</button>
+        <div id="savedCabinetsList" class="saved-cabinets"></div>
+
+        
       </div>
-
-      <!-- NEW: Saved Cabinets -->
-      <h2>Saved Cabinets</h2>
-      <button id="saveCabinetBtn">Save Current Cabinet</button>
-      <div id="savedCabinetsList" class="saved-cabinets"></div>
-
-      <hr>
-
-      <h2>Cabinet Export / Import</h2>
-      <button id="exportCabinetBtn">Export Cabinet</button>
-      <button id="importCabinetBtn">Import Cabinet</button>
-      <input type="file" id="importCabinetFile" accept=".json" style="display:none;">
     </div>
 
     <!-- CENTER ROOM -->
     <div id="roomContainer">
-
-<!-- Zoom Controls -->
-<div id="zoomControls">
-  <button id="zoomInBtn"><strong>+</strong></button>
-  <button id="zoomOutBtn"><strong>-</strong></button>
-</div>
-
-      <div id="room">
+      <!-- Zoom Controls -->
+      <div id="zoomControls">
+        <button id="zoomInBtn"><strong>+</strong></button>
+        <button id="zoomOutBtn"><strong>-</strong></button>
       </div>
-        
-<!-- CABINET DETAILS BAR -->
-<div id="cabinetDetailsBar" class="cabinet-details-bar disabled">
-  <div class="bar-inner">
-    <label>Name <input type="text" id="barName"></label>
-    <label>Width (M) <input type="number" id="barWidth" min="0.5" step="0.1"></label>
-    <label>Length (M) <input type="number" id="barHeight" min="0.5" step="0.1"></label>
-    <label>Rotation (°) <input type="number" id="barRotation" min="0" max="359" step="1"></label>
-    <label>Colour <input type="color" id="barColor"></label>
-  </div>
 
-  <div class="bar-buttons">
-    <button id="barSnapToggle" class="toggle-btn">Snapping: ON</button>
-    <button id="barLockToggle" class="toggle-btn">Unlocked</button>
-    <button id="barDeselect">Deselect</button>
-    <button id="barDuplicate">Duplicate</button>
-    <button id="barDelete">Delete</button>
-  </div>
-</div>
-      
+      <!-- The Room (script.js sets size/position on updateRoom) -->
+      <div id="room"></div>
+
+      <!-- CABINET DETAILS BAR -->
+      <div id="cabinetDetailsBar" class="cabinet-details-bar disabled">
+        <div class="bar-inner">
+          <label>Name <input type="text" id="barName"></label>
+          <label>Width (M) <input type="number" id="barWidth" min="0.5" step="0.1"></label>
+          <label>Length (M) <input type="number" id="barHeight" min="0.5" step="0.1"></label>
+          <label>Rotation (°) <input type="number" id="barRotation" min="0" max="359" step="1"></label>
+          <label>Colour <input type="color" id="barColor"></label>
+        </div>
+
+        <div class="bar-buttons">
+          <button id="barSnapToggle" class="toggle-btn">Snapping: ON</button>
+          <button id="barLockToggle" class="toggle-btn">Unlocked</button>
+          <button id="barDeselect">Deselect</button>
+          <button id="barDuplicate">Duplicate</button>
+          <button id="barDelete">Delete</button>
+        </div>
+      </div>
     </div>
 
     <!-- RIGHT SIDEBAR -->
     <div id="sidebar-right">
-      <h2>Room Dimensions</h2>
-      <label>Width (M): <input type="number" id="roomWidth" value="10" min="1"></label>
-      <label>Length (M): <input type="number" id="roomHeight" value="7" min="1"></label>
-      <label>Grid Size (M): <input type="number" id="gridSize" value="0.5" min="0.1" step="0.1"></label>
-      <button id="updateRoom">Update Room</button>
+      <div class="sidebar-inner">
+        <h2>Room Dimensions</h2>
+        <label>Width (M): <input type="number" id="roomWidth" value="10" min="1"></label>
+        <label>Length (M): <input type="number" id="roomHeight" value="7" min="1"></label>
+        <label>Grid Size (M): <input type="number" id="gridSize" value="0.5" min="0.1" step="0.1"></label>
+        <button id="updateRoom">Update Room</button>
 
       <hr>
 
-      <h2>Saved Rooms</h2>
-      <button id="saveRoomBtn">Save Current Room</button>
-      <div id="savedRoomsList" class="saved-rooms"></div>
+        <h2>Room Import / Export</h2>
+        <button id="exportLayout">Export Room</button>
+        <button id="exportPngBtn">Export Room as PNG</button>
+        <button id="importLayoutBtn">Import Room</button>
+        <input type="file" id="importFile" accept=".json" style="display: none;">
 
-      <hr>
+        <hr>
 
-<h2>Room Import / Export</h2>
-<button id="exportLayout">Export Room</button>
-<button id="exportPngBtn">Export Room as PNG</button> <!-- new button -->
-<button id="importLayoutBtn">Import Room</button>
-<input type="file" id="importFile" accept=".json" style="display: none;">
+        <h2>Saved Rooms</h2>
+        <button id="saveRoomBtn">Save Current Room</button>
+        <div id="savedRoomsList" class="saved-rooms"></div>
+
+        
+      </div>
     </div>
   </div>
 
+  <!-- SCRIPTS & POPUPS -->
   <script src="script.js"></script>
 
   <!-- Universal Popup -->
-<div id="customPopup" class="hidden">
-  <div class="popup-content">
-    <p id="popupMessage"></p>
-    <div class="popup-buttons">
-      <button id="popupCancel">Cancel</button>
-      <button id="popupConfirm">OK</button>
+  <div id="customPopup" class="hidden">
+    <div class="popup-content">
+      <p id="popupMessage"></p>
+      <div class="popup-buttons">
+        <button id="popupCancel">Cancel</button>
+        <button id="popupConfirm">OK</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- LOAD ROOM WARNING POPUP -->
-<div id="loadRoomPopup" class="hidden">
-  <div class="popup-content">
-    <p>⚠️ Loading a saved room will overwrite your current layout.<br><br>
-    Continue?</p>
-    <div class="popup-buttons">
-      <button id="cancelLoadRoomBtn">Cancel</button>
-      <button id="confirmLoadRoomBtn">Load Room</button>
+  <!-- Load Room Warning Popup -->
+  <div id="loadRoomPopup" class="hidden">
+    <div class="popup-content">
+      <p>Loading a saved room will overwrite your current layout.<br><br>Continue?</p>
+      <div class="popup-buttons">
+        <button id="cancelLoadRoomBtn">Cancel</button>
+        <button id="confirmLoadRoomBtn">Load Room</button>
+      </div>
     </div>
   </div>
-</div>
 
 <!-- ===== HELP POPUP ===== -->
 <div id="helpPopup" class="hidden popup-overlay">

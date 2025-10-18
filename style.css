@@ -7,6 +7,13 @@ body {
   overflow: auto;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* stop stray page scroll */
+}
+
 /* Default to Simple Dark Mode look before JS runs */
 body.simple-mode:not(.light-mode) {
     background: #202020;
@@ -246,11 +253,11 @@ header input {
   100% { background-position: 0% 50%; }
 }
 
-/* Container: 3-column layout */
 #container {
   display: flex;
-  height: calc(100vh - 120px);
-  overflow: auto;
+  flex-direction: row;
+  height: calc(100vh - var(--header-h, 120px));
+  overflow: hidden; /* keep internal scrolling inside panels only */
 }
 
 /* Left Sidebar (Cabinet Manager) */
@@ -2670,4 +2677,177 @@ body:not(.simple-mode).light-mode .grid-line {
 /* Simple Light Mode */
 body.simple-mode.light-mode .grid-line {
   background: rgba(0, 0, 0, 0.35); /* even a touch darker for clarity */
+}
+
+/* =============================
+   Tidy Sidebar Scale (no outer gaps)
+   ============================= */
+:root{
+  --sidebar-scale: 0.85;    /* visual shrink */
+  --sidebar-width: 260px;   /* a bit narrower than 300px */
+  --sidebar-gap: 20px;      /* spacing for zoom controls calc below */
+}
+
+/* Actual layout width gets a little smaller */
+#sidebar-left,
+#sidebar-right {
+  width: var(--sidebar-width);
+  padding: 16px;            /* slightly tighter padding */
+  gap: 12px;                /* slightly tighter vertical gaps */
+}
+
+/* Scale the panels from their OUTER edges so they remain flush */
+#sidebar-left {
+  transform: scale(var(--sidebar-scale));
+  transform-origin: top left;
+}
+#sidebar-right {
+  transform: scale(var(--sidebar-scale));
+  transform-origin: top right;
+}
+
+/* Keep headings/buttons readable after scale */
+#sidebar-left, #sidebar-right {
+  /* these help counter the scale a bit for legibility */
+  letter-spacing: 0.01em;
+}
+#sidebar-left button, #sidebar-right button {
+  padding: 10px;            /* was 12px */
+  font-size: 0.8rem;        /* was 0.85rem in places */
+}
+
+/* Zoom controls: sit just to the left of the (scaled) right panel */
+#zoomControls {
+  right: calc(var(--sidebar-width) * var(--sidebar-scale) + var(--sidebar-gap));
+  top: 150px; /* keep your existing vertical positioning */
+}
+
+:root{
+  --sidebar-scale: 0.85;   /* your chosen visual scale */
+  --sidebar-width: 260px;
+  --sidebar-gap: 20px;
+}
+
+/* Real width & flex column as before */
+#sidebar-left,
+#sidebar-right {
+  width: var(--sidebar-width);
+  padding: 16px;
+  gap: 12px;
+  /* Key lines: make the visual height fill the container even after scaling */
+  height: calc(100% / var(--sidebar-scale));
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Scale from the outer edges so they stay flush, no side gaps */
+#sidebar-left  { transform: scale(var(--sidebar-scale)); transform-origin: top left; }
+#sidebar-right { transform: scale(var(--sidebar-scale)); transform-origin: top right; }
+
+/* Keep zoom controls aligned with the (scaled) right sidebar */
+#zoomControls {
+  right: calc(var(--sidebar-width) * var(--sidebar-scale) + var(--sidebar-gap));
+}
+
+
+/* Take them out of flow, pin to edges, and make them fill to bottom */
+#sidebar-left,
+#sidebar-right {
+  position: fixed;
+  top: var(--header-h, 120px);
+  bottom: 0;                        /* <= forces full height to bottom */
+  width: var(--sidebar-width);
+  overflow-y: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+/* Keep flush to edges, scale content + background */
+#sidebar-left  { left: 0;  transform: scale(var(--sidebar-scale)); transform-origin: top left; }
+#sidebar-right { right: 0; transform: scale(var(--sidebar-scale)); transform-origin: top right; }
+
+:root{
+  --sidebar-scale: 0.85;           /* visual shrink */
+  --sidebar-width: 260px;          /* logical width before scale */
+  --sidebar-vis-w: calc(var(--sidebar-width) * var(--sidebar-scale));
+  --side-gap: 16px;                /* gutter between sidebars and center */
+}
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#container {
+  position: relative;
+  display: block;                   /* we’ll fix the sidebars */
+  height: calc(100vh - var(--header-h, 120px));
+  overflow: hidden;                 /* scrolling happens inside columns */
+}
+
+
+/* The middle column now uses margins equal to the *visual* sidebar width */
+#roomContainer {
+  position: relative;
+  margin-left:  calc(var(--sidebar-vis-w) + var(--side-gap));
+  margin-right: calc(var(--sidebar-vis-w) + var(--side-gap));
+  height: 100%;
+  overflow: auto;
+  padding: 40px;                    /* keep your current padding */
+  box-sizing: border-box;
+}
+
+/* Keep the zoom controls aligned to the visible right edge */
+#zoomControls {
+  position: fixed;
+  top: 150px;
+  right: calc(var(--sidebar-vis-w) + var(--side-gap));
+  z-index: 50;
+}
+
+/* =============================
+   Expand Saved Lists (3× taller)
+   ============================= */
+.saved-cabinets,
+.saved-rooms {
+  max-height: none !important;        /* remove any existing caps */
+  height: 33%;                       /* make them 3× current vertical space */
+  min-height: 8rem;                  /* ensures good minimum for empty states */
+  overflow-y: auto;                   /* still scroll if content exceeds space */
+  transition: height 0.3s ease;
+}
+
+/* Keep nice scrolling if sidebar is fixed */
+#sidebar-left,
+#sidebar-right {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* ===============================
+   Smart Room Centering (Fixed)
+   =============================== */
+#roomContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  padding: 0;
+}
+
+#room {
+  position: relative;
+  background: #222;
+  border: 4px solid #00ffff;
+  box-sizing: content-box;
+  transform: translateY(-10vh); /* keep raised position */
+  margin-bottom: 15vh;
+  min-width: 200px;
+  min-height: 200px;
 }
